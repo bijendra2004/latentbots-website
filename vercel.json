@@ -1,0 +1,21 @@
+{
+  "version": 2,
+  "rewrites": [
+    {
+      "source": "/admin",
+      "destination": "/website/admin-website/index.html"
+    },
+    {
+      "source": "/admin/:path*",
+      "destination": "/website/admin-website/:path*"
+    },
+    {
+      "source": "/api/:path*",
+      "destination": "https://latentbots-website.onrender.com/api/:path*"
+    },
+    {
+      "source": "/:path*",
+      "destination": "/website/user-website/:path*"
+    }
+  ]
+}
