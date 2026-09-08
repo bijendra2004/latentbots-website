@@ -282,13 +282,41 @@ const authRequestMsg = document.getElementById('auth-request-msg');
 const authVerifyMsg = document.getElementById('auth-verify-msg');
 const authEmailInput = document.getElementById('auth-email');
 const authOtpInput = document.getElementById('auth-otp-input');
-const otpTargetEmail = document.getElementById('otp-target-email');
 const btnSendOtp = document.getElementById('btn-send-otp');
 const btnVerifyOtp = document.getElementById('btn-verify-otp');
 const btnChangeEmail = document.getElementById('btn-change-email');
 const btnResendOtp = document.getElementById('btn-resend-otp');
+const resendTimerEl = document.getElementById('resend-timer');
 
 let pendingAuthEmail = '';
+let resendCountdownInterval = null;
+
+// 2-minute countdown timer for Resend OTP button
+function startResendCountdown() {
+  clearInterval(resendCountdownInterval);
+  let seconds = 120; // 2 minutes
+  if (btnResendOtp) {
+    btnResendOtp.disabled = true;
+  }
+  const tick = () => {
+    const m = String(Math.floor(seconds / 60)).padStart(2, '0');
+    const s = String(seconds % 60).padStart(2, '0');
+    if (resendTimerEl) resendTimerEl.textContent = `${m}:${s}`;
+    if (btnResendOtp) btnResendOtp.innerHTML = `RESEND OTP (<span id="resend-timer">${m}:${s}</span>)`;
+
+    if (seconds <= 0) {
+      clearInterval(resendCountdownInterval);
+      resendCountdownInterval = null;
+      if (btnResendOtp) {
+        btnResendOtp.disabled = false;
+        btnResendOtp.textContent = 'RESEND OTP';
+      }
+    }
+    seconds--;
+  };
+  tick();
+  resendCountdownInterval = setInterval(tick, 1000);
+}
 
 function openAuthModal(title = 'Sign In with Email', sub = 'Enter your email to receive a secure 6-digit sign-in code.') {
   if (!authModal) return;
@@ -297,6 +325,10 @@ function openAuthModal(title = 'Sign In with Email', sub = 'Enter your email to 
   const subEl = document.getElementById('auth-sub');
   if (titleEl) titleEl.textContent = title;
   if (subEl) subEl.textContent = sub;
+
+  // Clear countdown
+  clearInterval(resendCountdownInterval);
+  resendCountdownInterval = null;
 
   // Reset to Step 1
   if (authRequestForm) {
@@ -322,6 +354,8 @@ function openAuthModal(title = 'Sign In with Email', sub = 'Enter your email to 
 
 function closeAuthModal() {
   if (authModal) authModal.close();
+  clearInterval(resendCountdownInterval);
+  resendCountdownInterval = null;
 }
 
 // Step 1: Send OTP to Email
@@ -350,7 +384,6 @@ if (authRequestForm) {
       if (!res.ok) throw new Error(data.error || 'Failed to send OTP');
 
       pendingAuthEmail = email;
-      if (otpTargetEmail) otpTargetEmail.textContent = email;
 
       // Switch to Step 2 (Verify OTP)
       authRequestForm.hidden = true;
@@ -358,10 +391,10 @@ if (authRequestForm) {
         authVerifyForm.hidden = false;
         authVerifyForm.reset();
       }
-      if (authVerifyMsg) {
-        authVerifyMsg.textContent = `✅ Code sent! Check your inbox for ${email}.`;
-        authVerifyMsg.className = 'auth-msg success';
-      }
+
+      // Start 2-minute resend countdown
+      startResendCountdown();
+
       setTimeout(() => { authOtpInput?.focus(); }, 150);
     } catch (err) {
       if (authRequestMsg) {
@@ -434,6 +467,8 @@ if (authVerifyForm) {
 // Change Email button
 if (btnChangeEmail) {
   btnChangeEmail.addEventListener('click', () => {
+    clearInterval(resendCountdownInterval);
+    resendCountdownInterval = null;
     if (authVerifyForm) authVerifyForm.hidden = true;
     if (authRequestForm) authRequestForm.hidden = false;
     setTimeout(() => { authEmailInput?.focus(); }, 100);
@@ -456,19 +491,18 @@ if (btnResendOtp) {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Failed to resend code');
       if (authVerifyMsg) {
-        authVerifyMsg.textContent = `✅ Fresh code sent to ${pendingAuthEmail}!`;
+        authVerifyMsg.textContent = `✅ New code sent!`;
         authVerifyMsg.className = 'auth-msg success';
       }
+      // Restart 2-minute countdown
+      startResendCountdown();
     } catch (err) {
       if (authVerifyMsg) {
         authVerifyMsg.textContent = `❌ ${err.message}`;
         authVerifyMsg.className = 'auth-msg error';
       }
-    } finally {
-      setTimeout(() => {
-        btnResendOtp.disabled = false;
-        btnResendOtp.textContent = 'Resend Code';
-      }, 5000);
+      btnResendOtp.disabled = false;
+      btnResendOtp.textContent = 'RESEND OTP';
     }
   });
 }

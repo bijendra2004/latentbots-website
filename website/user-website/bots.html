@@ -217,10 +217,6 @@
 
       <!-- Step 2: Verify OTP Form (Hidden until OTP sent) -->
       <form id="auth-verify-form" hidden>
-        <div class="otp-sent-pill">
-          <span>📧 Code sent to <strong id="otp-target-email"></strong></span>
-          <button type="button" id="btn-change-email" class="btn-text-link">Change</button>
-        </div>
         <label>
           6-Digit Verification Code
           <input type="text" name="otp" id="auth-otp-input" placeholder="• • • • • •" maxlength="6" pattern="[0-9]{6}" required inputmode="numeric" autocomplete="one-time-code">
@@ -231,8 +227,8 @@
           </button>
         </div>
         <div class="otp-resend-row">
-          <span>Didn't receive the code?</span>
-          <button type="button" id="btn-resend-otp" class="btn-text-link">Resend Code</button>
+          <button type="button" id="btn-resend-otp" class="btn-text-link" disabled>RESEND OTP (<span id="resend-timer">02:00</span>)</button>
+          <button type="button" id="btn-change-email" class="btn-text-link">Change Email</button>
         </div>
         <p id="auth-verify-msg" class="auth-msg"></p>
       </form>
