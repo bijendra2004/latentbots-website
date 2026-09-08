@@ -12,24 +12,24 @@
 <body>
   <main class="shell">
     <!-- Login Card (Kept for future reactivation) -->
-    <section id="login-view" class="login-card" hidden>
+    <!-- Login Card (Shown first before access) -->
+    <section id="login-view" class="login-card">
       <div class="brand-wrap">
         <span class="brand">latent<span>bots</span></span>
         <span class="console-tag">OWNER CONSOLE</span>
       </div>
       <h1>Keep the signal clear.</h1>
-      <p class="muted">Owner access requires your password and the current six-digit authenticator code.</p>
+      <p class="muted">Owner access requires your admin email and password.</p>
       <form id="login-form">
-        <label>Email<input name="email" type="email" autocomplete="username" required></label>
-        <label>Password<input name="password" type="password" autocomplete="current-password" required></label>
-        <label>Authenticator code<input name="tokenCode" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" required></label>
-        <button class="button button-dark" type="submit">Enter console</button>
+        <label>Admin Email<input name="email" type="email" placeholder="latentbots@gmail.com" autocomplete="username" required></label>
+        <label>Admin Password<input name="password" type="password" placeholder="••••••••••••" autocomplete="current-password" required></label>
+        <button class="button button-dark" type="submit">Enter Console ➔</button>
         <p id="login-error" class="error" role="alert"></p>
       </form>
     </section>
 
-    <!-- Main Dashboard View -->
-    <section id="dashboard-view">
+    <!-- Main Dashboard View (Hidden until authenticated) -->
+    <section id="dashboard-view" hidden>
       <!-- Top Navigation & Official Header -->
       <header class="topbar">
         <div class="topbar-brand-group">

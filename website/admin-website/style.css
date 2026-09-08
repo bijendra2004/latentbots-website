@@ -1380,4 +1380,89 @@ input:focus, textarea:focus {
   }
 }
 
+/* ==========================================================
+   ADMIN LOGIN CARD STYLES
+   ========================================================== */
+.login-card {
+  max-width: 440px;
+  margin: 80px auto;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 40px 36px;
+  box-shadow: 0 20px 60px rgba(25, 49, 43, 0.12);
+  text-align: left;
+}
+
+.login-card .brand-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.login-card h1 {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--ink);
+  margin: 0 0 8px;
+  letter-spacing: -0.02em;
+}
+
+.login-card .muted {
+  font-size: 13.5px;
+  color: var(--muted);
+  margin: 0 0 24px;
+  line-height: 1.5;
+}
+
+#login-form {
+  display: grid;
+  gap: 16px;
+}
+
+#login-form label {
+  display: grid;
+  gap: 6px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+#login-form input {
+  width: 100%;
+  border: 1px solid var(--line);
+  background: #fdfdfa;
+  padding: 12px 14px;
+  color: var(--ink);
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 14px;
+  outline: none;
+  box-sizing: border-box;
+}
+
+#login-form input:focus {
+  border-color: var(--ink);
+  background: #ffffff;
+}
+
+#login-form button {
+  width: 100%;
+  padding: 13px 20px;
+  font-size: 14px;
+  font-weight: 800;
+  margin-top: 4px;
+  border-radius: 8px;
+}
+
+#login-error {
+  color: var(--danger);
+  font-size: 13px;
+  font-weight: 600;
+  margin: 4px 0 0;
+  min-height: 18px;
+  text-align: center;
+}
+
 

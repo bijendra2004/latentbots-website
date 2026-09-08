@@ -4,9 +4,9 @@ const AdminAuth = (() => {
   const loginForm = document.querySelector('#login-form');
   const loginError = document.querySelector('#login-error');
 
-  async function checkSession() {
-    const response = await fetch('/api/admin/session');
-    if (response.ok) showDashboard();
+  function showLogin() {
+    loginView.hidden = false;
+    dashboardView.hidden = true;
   }
 
   function showDashboard() {
@@ -15,12 +15,25 @@ const AdminAuth = (() => {
     window.dispatchEvent(new Event('admin-ready'));
   }
 
+  async function checkSession() {
+    try {
+      const response = await fetch('/api/admin/session', { credentials: 'include' });
+      if (response.ok) {
+        showDashboard();
+      } else {
+        showLogin();
+      }
+    } catch {
+      showLogin();
+    }
+  }
+
   loginForm.addEventListener('submit', async (event) => {
     event.preventDefault();
     loginError.textContent = '';
     const body = Object.fromEntries(new FormData(loginForm));
     try {
-      const response = await fetch('/api/admin/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+      const response = await fetch('/api/admin/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body), credentials: 'include' });
       const result = await response.json();
       if (!response.ok) throw new Error(result.error);
       showDashboard();
@@ -28,10 +41,13 @@ const AdminAuth = (() => {
   });
 
   document.querySelector('#logout-button').addEventListener('click', async () => {
-    await fetch('/api/admin/logout', { method: 'POST' });
+    await fetch('/api/admin/logout', { method: 'POST', credentials: 'include' });
     window.location.reload();
   });
-  // Auto show dashboard directly for preview/development
-  showDashboard();
-  return { showDashboard };
+
+  // Check if already logged in, otherwise show login form
+  showLogin();
+  checkSession();
+
+  return { showDashboard, checkSession };
 })();
