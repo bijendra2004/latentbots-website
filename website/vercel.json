@@ -1,21 +1,14 @@
 {
-  "version": 2,
   "rewrites": [
-    {
-      "source": "/admin",
-      "destination": "/admin-website/index.html"
-    },
-    {
-      "source": "/admin/:path*",
-      "destination": "/admin-website/:path*"
-    },
-    {
-      "source": "/api/:path*",
-      "destination": "https://latentbots-website.onrender.com/api/:path*"
-    },
-    {
-      "source": "/:path*",
-      "destination": "/user-website/:path*"
-    }
+    { "source": "/api/:path*", "destination": "https://latentbots-website.onrender.com/api/:path*" },
+    { "source": "/admin", "destination": "/admin-website/index.html" },
+    { "source": "/admin/", "destination": "/admin-website/index.html" },
+    { "source": "/admin/:path*", "destination": "/admin-website/:path*" },
+    { "source": "/", "destination": "/user-website/index.html" },
+    { "source": "/bots.html", "destination": "/user-website/bots.html" },
+    { "source": "/script.js", "destination": "/user-website/script.js" },
+    { "source": "/style.css", "destination": "/user-website/style.css" },
+    { "source": "/images/:path*", "destination": "/user-website/images/:path*" },
+    { "source": "/:path*", "destination": "/user-website/:path*" }
   ]
 }
