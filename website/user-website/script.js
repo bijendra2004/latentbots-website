@@ -220,9 +220,14 @@ function attachBotRowListeners() {
       const botObj = BOTS_DATABASE[botKey] || BOTS_DATABASE.latentmail;
       activeSelectedBot = botObj;
 
+      if (botObj.badge_status === 'COMING SOON') {
+        showToast(`✨ ${botObj.name} is coming soon to WhatsApp!`, '🟡');
+        return;
+      }
+
       const user = getCurrentUser();
       if (!user) {
-        openAuthModal();
+        openAuthModal('Sign In to Select Bot', `Enter your email to configure ${botObj.name}.`);
       } else {
         openRisingModal(botObj);
       }
@@ -251,20 +256,221 @@ document.querySelectorAll('.connect-button:not(.btn-connect-live):not(.hero-conn
   button.href = connectLink;
 });
 
+// Toast Notification Helper
+function showToast(message, icon = '🚀') {
+  let toast = document.querySelector('.latent-toast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.className = 'latent-toast';
+    document.body.appendChild(toast);
+  }
+  toast.innerHTML = `<span>${icon}</span> <span>${escapeHtml(message)}</span>`;
+  toast.classList.add('show');
+  clearTimeout(window.__toastTimer);
+  window.__toastTimer = setTimeout(() => {
+    toast.classList.remove('show');
+  }, 3800);
+}
+
 // Modals
 const authModal = document.getElementById('auth-modal');
 const botRiseModal = document.getElementById('bot-rise-modal');
-const authForm = document.getElementById('auth-form');
-const authError = document.getElementById('auth-error');
 
-function openAuthModal() {
+const authRequestForm = document.getElementById('auth-request-form');
+const authVerifyForm = document.getElementById('auth-verify-form');
+const authRequestMsg = document.getElementById('auth-request-msg');
+const authVerifyMsg = document.getElementById('auth-verify-msg');
+const authEmailInput = document.getElementById('auth-email');
+const authOtpInput = document.getElementById('auth-otp-input');
+const otpTargetEmail = document.getElementById('otp-target-email');
+const btnSendOtp = document.getElementById('btn-send-otp');
+const btnVerifyOtp = document.getElementById('btn-verify-otp');
+const btnChangeEmail = document.getElementById('btn-change-email');
+const btnResendOtp = document.getElementById('btn-resend-otp');
+
+let pendingAuthEmail = '';
+
+function openAuthModal(title = 'Sign In with Email', sub = 'Enter your email to receive a secure 6-digit sign-in code.') {
   if (!authModal) return;
-  if (authError) authError.textContent = '';
+
+  const titleEl = document.getElementById('auth-title');
+  const subEl = document.getElementById('auth-sub');
+  if (titleEl) titleEl.textContent = title;
+  if (subEl) subEl.textContent = sub;
+
+  // Reset to Step 1
+  if (authRequestForm) {
+    authRequestForm.hidden = false;
+    authRequestForm.reset();
+  }
+  if (authVerifyForm) {
+    authVerifyForm.hidden = true;
+    authVerifyForm.reset();
+  }
+  if (authRequestMsg) {
+    authRequestMsg.textContent = '';
+    authRequestMsg.className = 'auth-msg';
+  }
+  if (authVerifyMsg) {
+    authVerifyMsg.textContent = '';
+    authVerifyMsg.className = 'auth-msg';
+  }
+
   authModal.showModal();
+  setTimeout(() => { authEmailInput?.focus(); }, 100);
 }
 
 function closeAuthModal() {
   if (authModal) authModal.close();
+}
+
+// Step 1: Send OTP to Email
+if (authRequestForm) {
+  authRequestForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = authEmailInput?.value.trim();
+    if (!email) return;
+
+    if (btnSendOtp) {
+      btnSendOtp.disabled = true;
+      btnSendOtp.textContent = '⏳ Sending 6-digit code...';
+    }
+    if (authRequestMsg) {
+      authRequestMsg.textContent = '';
+      authRequestMsg.className = 'auth-msg';
+    }
+
+    try {
+      const res = await fetch('/api/users/send-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to send OTP');
+
+      pendingAuthEmail = email;
+      if (otpTargetEmail) otpTargetEmail.textContent = email;
+
+      // Switch to Step 2 (Verify OTP)
+      authRequestForm.hidden = true;
+      if (authVerifyForm) {
+        authVerifyForm.hidden = false;
+        authVerifyForm.reset();
+      }
+      if (authVerifyMsg) {
+        authVerifyMsg.textContent = `✅ Code sent! Check your inbox for ${email}.`;
+        authVerifyMsg.className = 'auth-msg success';
+      }
+      setTimeout(() => { authOtpInput?.focus(); }, 150);
+    } catch (err) {
+      if (authRequestMsg) {
+        authRequestMsg.textContent = `❌ ${err.message}`;
+        authRequestMsg.className = 'auth-msg error';
+      }
+    } finally {
+      if (btnSendOtp) {
+        btnSendOtp.disabled = false;
+        btnSendOtp.textContent = 'Send Verification Code ➔';
+      }
+    }
+  });
+}
+
+// Step 2: Verify OTP
+if (authVerifyForm) {
+  authVerifyForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const otp = authOtpInput?.value.trim();
+    if (!otp || otp.length !== 6) {
+      if (authVerifyMsg) {
+        authVerifyMsg.textContent = 'Please enter the complete 6-digit code.';
+        authVerifyMsg.className = 'auth-msg error';
+      }
+      return;
+    }
+
+    if (btnVerifyOtp) {
+      btnVerifyOtp.disabled = true;
+      btnVerifyOtp.textContent = '⏳ Verifying code...';
+    }
+
+    try {
+      const res = await fetch('/api/users/verify-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: pendingAuthEmail, otp })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Invalid code');
+
+      // Login success
+      setCurrentUser(data.user);
+      closeAuthModal();
+      showToast(`Welcome back, ${data.user.email}!`, '✅');
+
+      // Continue to bot connection if active
+      const botToConnect = activeSelectedBot || BOTS_DATABASE.latentmail;
+      if (botRiseModal && botToConnect) {
+        openRisingModal(botToConnect);
+      } else if (botToConnect) {
+        const waUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(botToConnect.waText || 'Hi, I want to activate this bot!')}`;
+        window.open(waUrl, '_blank');
+      }
+    } catch (err) {
+      if (authVerifyMsg) {
+        authVerifyMsg.textContent = `❌ ${err.message}`;
+        authVerifyMsg.className = 'auth-msg error';
+      }
+    } finally {
+      if (btnVerifyOtp) {
+        btnVerifyOtp.disabled = false;
+        btnVerifyOtp.textContent = 'Verify & Sign In ➔';
+      }
+    }
+  });
+}
+
+// Change Email button
+if (btnChangeEmail) {
+  btnChangeEmail.addEventListener('click', () => {
+    if (authVerifyForm) authVerifyForm.hidden = true;
+    if (authRequestForm) authRequestForm.hidden = false;
+    setTimeout(() => { authEmailInput?.focus(); }, 100);
+  });
+}
+
+// Resend OTP button
+if (btnResendOtp) {
+  btnResendOtp.addEventListener('click', async () => {
+    if (!pendingAuthEmail) return;
+    btnResendOtp.disabled = true;
+    btnResendOtp.textContent = 'Sending...';
+
+    try {
+      const res = await fetch('/api/users/send-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: pendingAuthEmail })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to resend code');
+      if (authVerifyMsg) {
+        authVerifyMsg.textContent = `✅ Fresh code sent to ${pendingAuthEmail}!`;
+        authVerifyMsg.className = 'auth-msg success';
+      }
+    } catch (err) {
+      if (authVerifyMsg) {
+        authVerifyMsg.textContent = `❌ ${err.message}`;
+        authVerifyMsg.className = 'auth-msg error';
+      }
+    } finally {
+      setTimeout(() => {
+        btnResendOtp.disabled = false;
+        btnResendOtp.textContent = 'Resend Code';
+      }, 5000);
+    }
+  });
 }
 
 function openRisingModal(bot) {
@@ -286,7 +492,7 @@ function openRisingModal(bot) {
   if (verEl) verEl.textContent = bot.version;
   if (updatedEl) updatedEl.textContent = `Updated: ${bot.updated || 'Today'}`;
   if (descEl) descEl.textContent = bot.description;
-  if (userDispEl) userDispEl.textContent = user ? `${user.email} (${user.phoneNumber})` : 'Connected';
+  if (userDispEl) userDispEl.textContent = user ? user.email : 'WhatsApp Connected';
 
   // Populate setup steps
   if (bot.steps && bot.steps.length >= 3) {
@@ -323,48 +529,6 @@ if (btnCloseRise) {
   btnCloseRise.addEventListener('click', closeRisingModal);
 }
 
-// Auth Form Submit
-if (authForm) {
-  authForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const email = document.getElementById('auth-email')?.value.trim();
-    const phoneNumber = document.getElementById('auth-phone')?.value.trim();
-
-    if (!email || !phoneNumber) {
-      if (authError) authError.textContent = 'Please provide both email and phone number.';
-      return;
-    }
-
-    const userData = { email, phoneNumber };
-    setCurrentUser(userData);
-
-    const botToConnect = activeSelectedBot || BOTS_DATABASE.latentmail;
-
-    try {
-      await fetch('/api/users/connect-bot', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: userData.email,
-          phoneNumber: userData.phoneNumber,
-          botName: botToConnect.name
-        })
-      });
-    } catch (err) {
-      console.error('Error recording connection:', err);
-    }
-
-    closeAuthModal();
-
-    if (botRiseModal) {
-      openRisingModal(botToConnect);
-    } else {
-      const waUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(botToConnect.waText || 'Hi, I want to activate this bot!')}`;
-      window.open(waUrl, '_blank');
-    }
-  });
-}
-
 // Attach initial bot selection listeners
 attachBotRowListeners();
 
@@ -382,7 +546,7 @@ if (btnConnectLive) {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             email: user.email,
-            phoneNumber: user.phoneNumber,
+            phoneNumber: user.phoneNumber || '',
             botName: bot.name
           })
         });
@@ -470,22 +634,47 @@ if (heroOuter) {
   heroOuter.addEventListener('mouseleave', startHeroAutoSlide);
 }
 
-// Each card's Connect button — auth gate + WhatsApp
+// Trigger Coming Soon Highlight Animation on badge
+function triggerComingSoonHighlight(cardElement, botName) {
+  const badgeEl = cardElement ? cardElement.querySelector('.hero-card-badge') : null;
+  if (badgeEl) {
+    badgeEl.classList.remove('badge-highlight-pulse');
+    void badgeEl.offsetWidth; // Trigger reflow for instant animation restart
+    badgeEl.classList.add('badge-highlight-pulse');
+    setTimeout(() => {
+      badgeEl.classList.remove('badge-highlight-pulse');
+    }, 3600);
+  }
+  showToast(`✨ ${botName || 'This Bot'} is coming soon to WhatsApp!`, '🟡');
+}
+
+// Each card's Connect button — Coming Soon highlight + Auth gate + WhatsApp
 document.querySelectorAll('.hero-connect-btn').forEach((btn) => {
-  btn.addEventListener('click', async () => {
+  btn.addEventListener('click', async (e) => {
+    e.stopPropagation();
     const botKey = btn.dataset.botKey || 'latentmail';
     const bot = BOTS_DATABASE[botKey] || BOTS_DATABASE.latentmail;
     activeSelectedBot = bot;
 
+    const card = btn.closest('.hero-card');
+    const badgeText = card?.querySelector('.badge-text')?.textContent?.trim().toUpperCase();
+    const isComingSoon = (bot.badge_status === 'COMING SOON') || (badgeText === 'COMING SOON');
+
+    if (isComingSoon) {
+      // Highlight the top-right corner badge and show notification
+      triggerComingSoonHighlight(card, bot.name);
+      return;
+    }
+
     const user = getCurrentUser();
     if (!user) {
-      openAuthModal();
+      openAuthModal('Sign In to Connect Bot', `Enter your email to connect with ${bot.name} on WhatsApp.`);
     } else {
       try {
         await fetch('/api/users/connect-bot', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: user.email, phoneNumber: user.phoneNumber, botName: bot.name })
+          body: JSON.stringify({ email: user.email, phoneNumber: user.phoneNumber || '', botName: bot.name })
         });
       } catch (err) { console.error('Could not sync bot connection:', err); }
       const waUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(bot.waText || 'Hi, I want to activate this bot!')}`;

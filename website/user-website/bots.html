@@ -189,32 +189,52 @@
     </div>
   </footer>
 
-  <!-- User Authentication Modal (Gated Login/Signup) -->
+  <!-- User Authentication Modal (Email OTP Based) -->
   <dialog id="auth-modal" class="site-modal">
     <div class="modal-card">
       <div class="modal-head">
         <div>
-          <span class="auth-tag">AUTHENTICATION REQUIRED</span>
-          <h2>Sign In to LatentBots</h2>
-          <p class="modal-sub">Enter your email & WhatsApp number to link this bot with your account.</p>
+          <span class="auth-tag">AUTHENTICATION</span>
+          <h2 id="auth-title">Sign In with Email</h2>
+          <p class="modal-sub" id="auth-sub">Enter your email to receive a secure 6-digit sign-in code.</p>
         </div>
         <button class="modal-close-btn" id="btn-close-auth" aria-label="Close">×</button>
       </div>
-      <form id="auth-form">
+
+      <!-- Step 1: Request OTP Form -->
+      <form id="auth-request-form">
         <label>
           Email Address
-          <input type="email" name="email" id="auth-email" placeholder="name@company.com" required>
-        </label>
-        <label>
-          WhatsApp Phone Number (with country code)
-          <input type="tel" name="phoneNumber" id="auth-phone" placeholder="+91 98765 43210" required>
+          <input type="email" name="email" id="auth-email" placeholder="name@gmail.com" required autocomplete="email">
         </label>
         <div class="auth-actions">
-          <button type="submit" class="button button-primary" id="btn-auth-submit">
-            Continue & Select Bot →
+          <button type="submit" class="button button-primary btn-full" id="btn-send-otp">
+            Send Verification Code ➔
           </button>
         </div>
-        <p id="auth-error" class="auth-error-msg"></p>
+        <p id="auth-request-msg" class="auth-msg"></p>
+      </form>
+
+      <!-- Step 2: Verify OTP Form (Hidden until OTP sent) -->
+      <form id="auth-verify-form" hidden>
+        <div class="otp-sent-pill">
+          <span>📧 Code sent to <strong id="otp-target-email"></strong></span>
+          <button type="button" id="btn-change-email" class="btn-text-link">Change</button>
+        </div>
+        <label>
+          6-Digit Verification Code
+          <input type="text" name="otp" id="auth-otp-input" placeholder="• • • • • •" maxlength="6" pattern="[0-9]{6}" required inputmode="numeric" autocomplete="one-time-code">
+        </label>
+        <div class="auth-actions">
+          <button type="submit" class="button button-primary btn-full" id="btn-verify-otp">
+            Verify & Sign In ➔
+          </button>
+        </div>
+        <div class="otp-resend-row">
+          <span>Didn't receive the code?</span>
+          <button type="button" id="btn-resend-otp" class="btn-text-link">Resend Code</button>
+        </div>
+        <p id="auth-verify-msg" class="auth-msg"></p>
       </form>
     </div>
   </dialog>

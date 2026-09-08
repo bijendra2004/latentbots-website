@@ -68,7 +68,29 @@ function renderTestEmail({ timestamp, senderEmail }) {
   return `${getEmailHeader('Brevo SMTP Verification Successful')}${content}${getEmailFooter()}`;
 }
 
+function renderOtpEmail({ otpCode, expiryMinutes = 10 }) {
+  const content = `
+    <p style="font-size: 15px; line-height: 1.6; margin: 0 0 16px;">Hello,</p>
+    <p style="font-size: 15px; line-height: 1.6; margin: 0 0 16px;">
+      Use the 6-digit verification code below to securely sign in to your <strong>LatentBots</strong> account:
+    </p>
+    <div style="background: #ffffff; border: 2px dashed #ef744c; border-radius: 12px; padding: 24px; text-align: center; margin: 24px 0;">
+      <span style="font-family: 'DM Mono', monospace, Courier; font-size: 36px; font-weight: 800; letter-spacing: 8px; color: #19312b; display: inline-block;">
+        ${otpCode}
+      </span>
+      <p style="margin: 12px 0 0; font-size: 12.5px; color: #78877e;">
+        ⏱️ This code will expire in <strong>${expiryMinutes} minutes</strong>.
+      </p>
+    </div>
+    <p style="font-size: 13.5px; line-height: 1.6; color: #5f6f67; margin: 0;">
+      If you did not request this verification code, you can safely ignore this email.
+    </p>
+  `;
+  return `${getEmailHeader('Sign In Verification Code')}${content}${getEmailFooter()}`;
+}
+
 module.exports = {
   renderWelcomeEmail,
-  renderTestEmail
+  renderTestEmail,
+  renderOtpEmail
 };

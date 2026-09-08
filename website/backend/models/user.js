@@ -45,7 +45,7 @@ function findUserByEmail(email) {
   `).get(email) || null;
 }
 
-function createUser({ email, phoneNumber }) {
+function createUser({ email, phoneNumber = '' }) {
   const existing = findUserByEmail(email);
   if (existing) {
     if (phoneNumber && phoneNumber !== existing.phone_number) {
@@ -54,8 +54,34 @@ function createUser({ email, phoneNumber }) {
     return findUserById(existing.id);
   }
   const id = crypto.randomUUID();
-  db.prepare('INSERT INTO users (id, email, phone_number) VALUES (?, ?, ?)').run(id, email, phoneNumber);
+  db.prepare('INSERT INTO users (id, email, phone_number) VALUES (?, ?, ?)').run(id, email, phoneNumber || '');
   return findUserById(id);
+}
+
+function saveOtp({ email, otpCode, expiryMinutes = 10 }) {
+  const expiresAt = Date.now() + expiryMinutes * 60 * 1000;
+  // Invalidate any previous unverified OTPs for this email
+  db.prepare('UPDATE email_otps SET verified = 1 WHERE LOWER(email) = LOWER(?) AND verified = 0').run(email);
+  const stmt = db.prepare('INSERT INTO email_otps (email, otp_code, expires_at, verified) VALUES (?, ?, ?, 0)');
+  stmt.run(email.toLowerCase(), String(otpCode), expiresAt);
+  return { email, otpCode, expiresAt };
+}
+
+function verifyOtp({ email, otpCode }) {
+  const now = Date.now();
+  const row = db.prepare(`
+    SELECT * FROM email_otps 
+    WHERE LOWER(email) = LOWER(?) AND otp_code = ? AND verified = 0 AND expires_at > ?
+    ORDER BY created_at DESC LIMIT 1
+  `).get(email.toLowerCase(), String(otpCode).trim(), now);
+
+  if (!row) {
+    return { success: false, message: 'Invalid or expired OTP code. Please request a new one.' };
+  }
+
+  // Mark OTP as verified
+  db.prepare('UPDATE email_otps SET verified = 1 WHERE id = ?').run(row.id);
+  return { success: true, otpId: row.id };
 }
 
 function getNotificationState(id, currentVersion) {
@@ -75,4 +101,15 @@ function markVersionSeen(id, versionNumber) {
   return result.changes > 0 ? findUserById(id) : null;
 }
 
-module.exports = { listUsers, findUserById, findUserByEmail, updateUser, toggleBlock, createUser, getNotificationState, markVersionSeen };
+module.exports = {
+  listUsers,
+  findUserById,
+  findUserByEmail,
+  updateUser,
+  toggleBlock,
+  createUser,
+  saveOtp,
+  verifyOtp,
+  getNotificationState,
+  markVersionSeen
+};
