@@ -4,7 +4,7 @@ require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 
 const config = {
   port: Number(process.env.PORT || 3000),
-  dbPath: path.resolve(__dirname, '..', process.env.DB_PATH || './data/latentmail.db'),
+  dbPath: path.resolve(__dirname, '..', process.env.DB_PATH || './data/latentbots.db'),
   adminEmail: process.env.ADMIN_EMAIL || '',
   adminPassword: process.env.ADMIN_PASSWORD || '',
   adminTotpSecret: process.env.ADMIN_TOTP_SECRET || '',

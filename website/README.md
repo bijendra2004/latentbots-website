@@ -105,7 +105,7 @@ cp .env.example .env
 Edit `.env` with your secure credentials:
 ```env
 PORT=3000
-DB_PATH=./data/latentmail.db
+DB_PATH=./data/latentbots.db
 ADMIN_EMAIL=owner@example.com
 ADMIN_PASSWORD=your-secure-admin-password-123
 ADMIN_TOTP_SECRET=JBSWY3DPEHPK3PXP
