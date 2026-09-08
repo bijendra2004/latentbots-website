@@ -1,0 +1,33 @@
+# Environment & secrets (Crucial: never commit sensitive tokens)
+.env
+.env.*
+!.env.example
+*.env
+website/.env
+
+# SQLite Databases & Dynamic Uploads
+data/*.db
+data/*.db-shm
+data/*.db-wal
+data/bot-files/
+website/data/*.db
+website/data/*.db-shm
+website/data/*.db-wal
+website/data/bot-files/
+*.db
+*.db-journal
+
+# Dependencies
+node_modules/
+website/node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Logs & OS artifacts
+*.log
+.DS_Store
+.DS_Store?
+._*
+.idea/
+.vscode/

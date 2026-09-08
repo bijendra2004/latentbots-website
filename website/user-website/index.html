@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="LatentBots delivers intelligent notifications, emails, and alerts straight to WhatsApp.">
+  <title>LatentBots - Intelligent WhatsApp Automation & Bots</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,400;0,500;1,400&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Header Navigation -->
+  <header class="site-header">
+    <a class="brand" href="index.html#home" aria-label="LatentBots home">latent<span>bots</span></a>
+    <nav class="site-nav" aria-label="Main navigation">
+      <a class="active" href="index.html#home">Home</a>
+      <a href="bots.html">Bots</a>
+      <a href="#story">About Us</a>
+      <a href="#developer">Developer</a>
+    </nav>
+    <div class="header-auth" id="header-auth-container">
+      <a class="btn-signin" id="btn-header-signin" href="#signin">Sign In</a>
+      <a class="btn-signup" id="btn-header-signup" href="#signup">Sign Up</a>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero Section: Card-based Bot Carousel -->
+    <div class="hero-wrapper-outer" id="home">
+      <button class="hero-screen-arrow hero-arrow-left" id="hero-prev-btn" aria-label="Previous Bot" title="Previous Bot">‹</button>
+
+      <div class="hero-slider-viewport">
+        <div class="hero-slider-track" id="hero-slider-track">
+
+          <!-- Card 1: LatentMail -->
+          <div class="hero-card" data-bot="latentmail">
+            <div class="hero-card-badge badge-live" data-badge-for="latentmail">
+              <span class="badge-dot"></span>
+              <span class="badge-text">LIVE</span>
+            </div>
+            <div class="hero-card-left">
+              <p class="kicker">A softer way to stay in the loop</p>
+              <h1>Important messages,<br><em>right where you are.</em></h1>
+              <p class="lede">LatentMail brings the updates that matter to WhatsApp, so you can keep moving without another inbox to manage.</p>
+              <div class="hero-cta-group">
+                <button class="connect-button hero-connect-btn" type="button" data-bot-key="latentmail">Connect on WhatsApp <span aria-hidden="true">↗</span></button>
+              </div>
+              <p class="microcopy">No new app. No noisy feed. Just the messages you asked for.</p>
+            </div>
+            <div class="hero-card-right notification-art">
+              <div class="art-ring art-ring-small"></div>
+              <div class="art-ring art-ring-large"></div>
+              <div class="notification-card">
+                <span class="notification-dot"></span>
+                <div class="notification-info">
+                  <strong class="card-brand">latent<span>mail</span></strong>
+                  <small class="card-version">Latest version <span class="version-num">v1.0.0</span></small>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 2: LatentAlert -->
+          <div class="hero-card" data-bot="latentalert">
+            <div class="hero-card-badge badge-live" data-badge-for="latentalert">
+              <span class="badge-dot"></span>
+              <span class="badge-text">LIVE</span>
+            </div>
+            <div class="hero-card-left">
+              <p class="kicker">Real-time server &amp; incident monitoring</p>
+              <h1>Critical system alerts,<br><em>instantly on WhatsApp.</em></h1>
+              <p class="lede">LatentAlert routes server downtime, error spikes, and deployment status alerts directly to your phone within seconds.</p>
+              <div class="hero-cta-group">
+                <button class="connect-button hero-connect-btn" type="button" data-bot-key="latentalert">Connect on WhatsApp <span aria-hidden="true">↗</span></button>
+              </div>
+              <p class="microcopy">Instant delivery. Webhook verified. Zero false alarms.</p>
+            </div>
+            <div class="hero-card-right notification-art">
+              <div class="art-ring art-ring-small"></div>
+              <div class="art-ring art-ring-large"></div>
+              <div class="notification-card">
+                <span class="notification-dot"></span>
+                <div class="notification-info">
+                  <strong class="card-brand">latent<span>alert</span></strong>
+                  <small class="card-version">Latest version <span class="version-num">v1.1.0</span></small>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 3: LatentDigest -->
+          <div class="hero-card" data-bot="latentdigest">
+            <div class="hero-card-badge badge-live" data-badge-for="latentdigest">
+              <span class="badge-dot"></span>
+              <span class="badge-text">LIVE</span>
+            </div>
+            <div class="hero-card-left">
+              <p class="kicker">Daily morning briefing on schedule</p>
+              <h1>Your day at a glance,<br><em>delivered at 8:00 AM.</em></h1>
+              <p class="lede">LatentDigest delivers a calm morning overview of your schedule, key newsletter highlights, and unread priority threads.</p>
+              <div class="hero-cta-group">
+                <button class="connect-button hero-connect-btn" type="button" data-bot-key="latentdigest">Connect on WhatsApp <span aria-hidden="true">↗</span></button>
+              </div>
+              <p class="microcopy">Calm mornings. 8:00 AM daily. Smart curated summaries.</p>
+            </div>
+            <div class="hero-card-right notification-art">
+              <div class="art-ring art-ring-small"></div>
+              <div class="art-ring art-ring-large"></div>
+              <div class="notification-card">
+                <span class="notification-dot"></span>
+                <div class="notification-info">
+                  <strong class="card-brand">latent<span>digest</span></strong>
+                  <small class="card-version">Latest version <span class="version-num">v1.0.0</span></small>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 4: LatentLead -->
+          <div class="hero-card" data-bot="latentlead">
+            <div class="hero-card-badge badge-live" data-badge-for="latentlead">
+              <span class="badge-dot"></span>
+              <span class="badge-text">LIVE</span>
+            </div>
+            <div class="hero-card-left">
+              <p class="kicker">Instant inbound CRM alerts</p>
+              <h1>Never lose a lead,<br><em>catch prospects in 5s.</em></h1>
+              <p class="lede">LatentLead notifies your sales team on WhatsApp immediately whenever a customer submits an inquiry form.</p>
+              <div class="hero-cta-group">
+                <button class="connect-button hero-connect-btn" type="button" data-bot-key="latentlead">Connect on WhatsApp <span aria-hidden="true">↗</span></button>
+              </div>
+              <p class="microcopy">5-Second response time. Form capture webhook. High conversion.</p>
+            </div>
+            <div class="hero-card-right notification-art">
+              <div class="art-ring art-ring-small"></div>
+              <div class="art-ring art-ring-large"></div>
+              <div class="notification-card">
+                <span class="notification-dot"></span>
+                <div class="notification-info">
+                  <strong class="card-brand">latent<span>lead</span></strong>
+                  <small class="card-version">Latest version <span class="version-num">v1.0.0</span></small>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Slider Dots -->
+      <div class="hero-slider-dots" id="hero-slider-dots">
+        <span class="hero-dot active" data-slide="0" title="LatentMail"></span>
+        <span class="hero-dot" data-slide="1" title="LatentAlert"></span>
+        <span class="hero-dot" data-slide="2" title="LatentDigest"></span>
+        <span class="hero-dot" data-slide="3" title="LatentLead"></span>
+      </div>
+
+      <button class="hero-screen-arrow hero-arrow-right" id="hero-next-btn" aria-label="Next Bot" title="Next Bot">›</button>
+    </div>
+
+    <!-- Why LatentBots Section -->
+    <section class="features section-shell" id="why-latentbots" aria-labelledby="features-title">
+      <div class="section-intro">
+        <p class="kicker">Why LatentBots</p>
+        <h2 id="features-title">A little more signal.<br><em>A lot less noise.</em></h2>
+      </div>
+      <div class="feature-grid">
+        <article class="feature-card">
+          <div class="feature-icon">
+            <img src="assets/icon-funnel.svg" alt="Useful by default" width="38" height="38">
+          </div>
+          <span class="feature-number">01</span>
+          <h3>Useful by default</h3>
+          <p>Receive only the messages, system alerts, and morning digests you choose to hear about across all your connected bots.</p>
+        </article>
+        <article class="feature-card">
+          <div class="feature-icon">
+            <img src="assets/icon-lock.svg" alt="Made for WhatsApp" width="38" height="38">
+          </div>
+          <span class="feature-number">02</span>
+          <h3>Made for WhatsApp</h3>
+          <p>Nothing new to install. No messy dashboards. Every intelligent bot operates right inside your daily WhatsApp chat.</p>
+        </article>
+        <article class="feature-card">
+          <div class="feature-icon">
+            <img src="assets/icon-hand.svg" alt="Always in your hands" width="38" height="38">
+          </div>
+          <span class="feature-number">03</span>
+          <h3>Always in your hands</h3>
+          <p>Stay ahead of critical emails, server uptime incidents, and inbound sales leads wherever the day takes you.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- Our Story Section -->
+    <section class="story section-shell" id="story">
+      <div class="story-copy">
+        <p class="kicker">The idea behind the signal</p>
+        <h2>Our Story</h2>
+        <p>LatentBots started with a simple question: what if useful notifications and automation could feel calm instead of demanding?</p>
+        <p>We built a family of intelligent WhatsApp bots to deliver the things that matter—from priority emails and system alerts to daily morning digests—in the place people already check every day: WhatsApp.</p>
+        <p>No inbox overload. No endless dashboard. Just clear, timely messages that help you stay informed and get back to your life.</p>
+      </div>
+      <div class="message-icon-container">
+        <img src="images/message_icon.png" alt="Person holding phone with messages">
+      </div>
+    </section>
+
+    <!-- Developer Section -->
+    <section class="developer-section section-shell" id="developer">
+      <div class="developer-card">
+        <p class="dev-kicker">DEVELOPER</p>
+        <h2>BIJENDRA YADAV</h2>
+        <p class="dev-bio">
+          Full-stack developer passionate about building impactful tools that make a difference. LatentBots was created to bring calm, intelligent automation and bot notifications directly to WhatsApp without inbox overload or dashboards.
+        </p>
+        <div class="dev-contact-list">
+          <a href="mailto:bijendra2004yadav@gmail.com" class="dev-contact-item">
+            <span class="dev-icon-box">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            </span>
+            <span>bijendra2004yadav@gmail.com</span>
+          </a>
+          <a href="https://github.com/bijendra2004" target="_blank" rel="noopener noreferrer" class="dev-contact-item">
+            <span class="dev-icon-box">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+            </span>
+            <span>github.com/bijendra2004</span>
+          </a>
+        </div>
+        <div class="dev-divider"></div>
+        <div class="dev-tech-stack">
+          <p class="dev-kicker">TECH STACK</p>
+          <div class="tech-tags">
+            <span>NODE.JS</span>
+            <span>EXPRESS</span>
+            <span>SQLITE</span>
+            <span>WHATSAPP API</span>
+            <span>HTML5 / CSS3</span>
+            <span>JAVASCRIPT</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Site Footer -->
+  <footer class="site-footer" id="contact">
+    <div class="footer-inner">
+      <div class="footer-top">
+        <a class="brand" href="index.html#home" aria-label="LatentBots home">latent<span>bots</span></a>
+        <nav class="footer-nav" aria-label="Footer navigation">
+          <a href="index.html#home">Home</a>
+          <span class="nav-sep">|</span>
+          <a href="bots.html">Bots</a>
+          <span class="nav-sep">|</span>
+          <a href="#story">About Us</a>
+          <span class="nav-sep">|</span>
+          <a href="#developer">Developer</a>
+          <span class="nav-sep">|</span>
+          <a href="#">Privacy Policy</a>
+          <span class="nav-sep">|</span>
+          <a href="#">Terms of Service</a>
+        </nav>
+      </div>
+      <div class="footer-bottom">
+        <span class="footer-disclaimer">INTELLIGENT NOTIFICATIONS. DELIVERED STRAIGHT TO WHATSAPP.</span>
+        <span class="footer-credits">BUILT BY <strong class="dev-credit-name">BIJENDRA YADAV</strong> · &copy; 2026 LATENTBOTS. ALL RIGHTS RESERVED.</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- User Authentication Modal -->
+  <dialog id="auth-modal" class="site-modal">
+    <div class="modal-card">
+      <div class="modal-head">
+        <div>
+          <span class="auth-tag">AUTHENTICATION</span>
+          <h2>Sign In to LatentBots</h2>
+          <p class="modal-sub">Enter your email & WhatsApp number to connect your bot.</p>
+        </div>
+        <button class="modal-close-btn" id="btn-close-auth" aria-label="Close">×</button>
+      </div>
+      <form id="auth-form">
+        <label>
+          Email Address
+          <input type="email" name="email" id="auth-email" placeholder="name@company.com" required>
+        </label>
+        <label>
+          WhatsApp Phone Number (with country code)
+          <input type="tel" name="phoneNumber" id="auth-phone" placeholder="+91 98765 43210" required>
+        </label>
+        <div class="auth-actions">
+          <button type="submit" class="button-primary" id="btn-auth-submit">
+            Continue & Connect Bot →
+          </button>
+        </div>
+        <p id="auth-error" class="auth-error-msg"></p>
+      </form>
+    </div>
+  </dialog>
+
+  <script src="script.js"></script>
+</body>
+</html>

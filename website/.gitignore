@@ -1,0 +1,27 @@
+# Environment & secrets
+.env
+.env.*
+!.env.example
+*.env
+
+# SQLite Databases & Dynamic Uploads
+data/*.db
+data/*.db-shm
+data/*.db-wal
+data/bot-files/
+*.db
+*.db-journal
+
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Logs & OS artifacts
+*.log
+.DS_Store
+.DS_Store?
+._*
+.idea/
+.vscode/

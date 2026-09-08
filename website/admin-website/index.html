@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LatentBots Admin Console</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,400;0,500;1,400&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <main class="shell">
+    <!-- Login Card (Kept for future reactivation) -->
+    <section id="login-view" class="login-card" hidden>
+      <div class="brand-wrap">
+        <span class="brand">latent<span>bots</span></span>
+        <span class="console-tag">OWNER CONSOLE</span>
+      </div>
+      <h1>Keep the signal clear.</h1>
+      <p class="muted">Owner access requires your password and the current six-digit authenticator code.</p>
+      <form id="login-form">
+        <label>Email<input name="email" type="email" autocomplete="username" required></label>
+        <label>Password<input name="password" type="password" autocomplete="current-password" required></label>
+        <label>Authenticator code<input name="tokenCode" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" required></label>
+        <button class="button button-dark" type="submit">Enter console</button>
+        <p id="login-error" class="error" role="alert"></p>
+      </form>
+    </section>
+
+    <!-- Main Dashboard View -->
+    <section id="dashboard-view">
+      <!-- Top Navigation & Official Header -->
+      <header class="topbar">
+        <div class="topbar-brand-group">
+          <a class="brand" href="/admin/">latent<span>bots</span></a>
+          <span class="console-tag">OWNER CONSOLE</span>
+          <div class="system-health-badges">
+            <span class="health-pill pill-online" title="WhatsApp Gateway Connected"><span class="dot"></span> WhatsApp Gateway</span>
+            <span class="health-pill pill-online" title="Email Ingestion Webhook Active"><span class="dot"></span> Email Ingest</span>
+            <span class="health-pill pill-info" title="Database Engine Healthy"><span class="dot"></span> SQLite WAL</span>
+          </div>
+        </div>
+        <div class="topbar-actions">
+          <a href="/" target="_blank" class="button button-light btn-preview">View Live Site ↗</a>
+          <button id="refresh-all" class="button button-dark btn-refresh" title="Refresh all data"><span class="icon-spin">↻</span> Refresh</button>
+          <button id="logout-button" class="button button-outline">Sign out</button>
+        </div>
+      </header>
+
+      <div id="dashboard-error" class="error-banner" role="alert" hidden></div>
+
+      <!-- KPI & Quick Stats Grid -->
+      <section class="stats-grid" id="stats"></section>
+
+      <!-- Row 1: Audience / User Control & Live Message Traffic Feed -->
+      <div class="workspace-grid">
+        <!-- Registered Users / Audience Panel -->
+        <section class="panel users-panel">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">AUDIENCE MANAGEMENT</p>
+              <h2>Registered Users & Controls</h2>
+              <p class="panel-sub">Click red dots on user rows to inspect and troubleshoot active issues.</p>
+            </div>
+            <div class="panel-actions">
+              <button id="refresh-users" class="icon-button" title="Refresh users"><span class="icon-spin">↻</span></button>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>User / Email</th>
+                  <th>WhatsApp Phone</th>
+                  <th>Joined Date</th>
+                  <th>Status</th>
+                  <th>Seen Ver.</th>
+                  <th style="text-align: right;">Quick Actions</th>
+                </tr>
+              </thead>
+              <tbody id="users-body"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Live Message / Email Forwarding Stream -->
+        <section class="panel traffic-panel">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">LIVE TRAFFIC</p>
+              <h2>Message Stream</h2>
+              <p class="panel-sub">Recent emails forwarded to WhatsApp in real-time.</p>
+            </div>
+          </div>
+          <div class="stream-list" id="traffic-stream-body"></div>
+        </section>
+      </div>
+
+      <!-- Row 2: Bot Deployment & Version Release Hub (Upload & Manage Bots) -->
+      <section class="panel bot-deploy-panel" id="bot-deploy-panel">
+        <div class="panel-heading">
+          <div>
+            <div class="heading-with-badge">
+              <p class="eyebrow">BOT DEPLOYMENT & VERSION MANAGER</p>
+              <span class="badge-status-pill pill-online" id="bot-mode-badge">✨ Deploy New Bot</span>
+            </div>
+            <h2>Bot File Upload & WhatsApp Automation Hub</h2>
+            <p class="panel-sub">Upload bot scripts, configure WhatsApp connect prompts, setup 3-step guides, or push auto-detected version updates to live users.</p>
+          </div>
+          <div class="panel-actions">
+            <button type="button" id="btn-reset-bot-form" class="button button-light btn-sm">↺ Reset Form</button>
+          </div>
+        </div>
+
+        <div class="bot-deploy-grid">
+          <!-- Left Column: Bot Deploy / Update Form -->
+          <form id="bot-deploy-form" class="bot-deploy-form">
+            <div class="form-row-2">
+              <label>
+                Target Bot (Select existing to push update, or create new)
+                <select id="bot-selector" name="botSelector" class="select-styled">
+                  <option value="__new__">✨ Create & Deploy New Bot...</option>
+                </select>
+              </label>
+              <label>
+                Bot Identifier / Slug
+                <input type="text" id="bot-id" name="id" placeholder="e.g. latentmail, latentsupport" required pattern="[a-zA-Z0-9_-]+" title="Alphanumeric, underscores, hyphens only">
+              </label>
+            </div>
+
+            <div class="form-row-4">
+              <label>
+                Bot Display Name
+                <input type="text" id="bot-name" name="name" placeholder="e.g. LatentMail WhatsApp Bot" required>
+              </label>
+              <label>
+                Category
+                <input type="text" id="bot-category" name="category" placeholder="e.g. Email Forwarding, AI Assistant" required>
+              </label>
+              <label>
+                Version Number
+                <input type="text" id="bot-version" name="version" placeholder="e.g. v1.1.0" required pattern="v?[0-9]+(\.[0-9]+)*">
+              </label>
+              <label>
+                Launch Badge (Hero Corner)
+                <select id="bot-badge-status" name="badge_status" class="select-styled">
+                  <option value="LIVE">🟢 LIVE</option>
+                  <option value="COMING SOON">🟡 COMING SOON</option>
+                  <option value="BETA">🔵 BETA</option>
+                  <option value="MAINTENANCE">🟠 MAINTENANCE</option>
+                </select>
+              </label>
+            </div>
+
+            <label>
+              Bot Summary / Description (Shown on Card & Catalog)
+              <textarea id="bot-description" name="description" rows="3" placeholder="Describe what this bot does for users..." required></textarea>
+            </label>
+
+            <label>
+              WhatsApp Preset Connect Greeting (Pre-filled when user opens WhatsApp)
+              <input type="text" id="bot-watext" name="wa_text" placeholder="e.g. Hi, I want to activate LatentMail WhatsApp Bot for my account!" required>
+            </label>
+
+            <!-- 3 Setup Steps -->
+            <div class="setup-steps-builder">
+              <p class="steps-builder-heading">⚡ 3-Step Setup Instructions (Shown to users in Connect Modal)</p>
+              <div class="steps-grid-inputs">
+                <div class="step-input-card">
+                  <span class="step-badge">01</span>
+                  <input type="text" id="step1-title-input" placeholder="Step 1 Title" value="Set Forwarding Rule" required>
+                  <textarea id="step1-desc-input" rows="2" placeholder="Step 1 Description" required>Auto-forward priority emails or alerts to your dedicated bot address.</textarea>
+                </div>
+                <div class="step-input-card">
+                  <span class="step-badge">02</span>
+                  <input type="text" id="step2-title-input" placeholder="Step 2 Title" value="Choose Notification Level" required>
+                  <textarea id="step2-desc-input" rows="2" placeholder="Step 2 Description" required>Select full messages or AI-condensed smart summaries for quick reading.</textarea>
+                </div>
+                <div class="step-input-card">
+                  <span class="step-badge">03</span>
+                  <input type="text" id="step3-title-input" placeholder="Step 3 Title" value="Confirm WhatsApp Link" required>
+                  <textarea id="step3-desc-input" rows="2" placeholder="Step 3 Description" required>Click the button below to verify your WhatsApp chat and receive instant notifications.</textarea>
+                </div>
+              </div>
+            </div>
+
+            <!-- Bot File Upload Area -->
+            <div class="bot-file-upload-zone" id="bot-dropzone">
+              <input type="file" id="bot-file-input" class="file-input-hidden" accept=".js,.py,.json,.zip,.txt,.ts">
+              <div class="dropzone-content" id="dropzone-content">
+                <span class="dropzone-icon">📁</span>
+                <div>
+                  <strong>Drop bot script / config file here, or <span class="browse-link">browse</span></strong>
+                  <p class="dropzone-sub">Supports .js, .py, .json, .zip (Max 20MB). Optional metadata payload.</p>
+                </div>
+              </div>
+              <div id="file-preview" class="file-preview-pill" hidden>
+                <span class="file-icon">📄</span>
+                <span id="file-name-display" class="file-name-text">filename.js</span>
+                <span id="file-size-display" class="file-size-badge">12 KB</span>
+                <button type="button" id="btn-remove-file" class="btn-remove-file" title="Remove file">×</button>
+              </div>
+            </div>
+
+            <!-- Release to Changelog Options -->
+            <div class="release-toggle-wrap">
+              <label class="check-label">
+                <input type="checkbox" id="bot-publish-changelog" name="publish_release" checked>
+                <span>Also publish release note to Changelog & increment system version</span>
+              </label>
+            </div>
+
+            <div class="form-actions-bar">
+              <button type="submit" id="btn-deploy-bot" class="button button-accent btn-deploy-large">
+                🚀 Deploy Bot & Sync Live Website
+              </button>
+              <p id="bot-form-msg" class="form-message"></p>
+            </div>
+          </form>
+        </div>
+
+        <!-- Deployed Bots Management Table -->
+        <div class="deployed-bots-wrap">
+          <div class="sub-heading-bar">
+            <h3>Active Deployed Bots Roster</h3>
+            <span class="bot-count-badge" id="bot-count-indicator">4 Bots Online</span>
+          </div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Bot Name & ID</th>
+                  <th>Category</th>
+                  <th>Current Version</th>
+                  <th>Hero Badge</th>
+                  <th>Attached File</th>
+                  <th>WhatsApp Trigger</th>
+                  <th>Status</th>
+                  <th style="text-align: right;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="deployed-bots-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Row 3: System Issues & Error Logs Console -->
+      <section class="panel issues-panel" id="issues-panel">
+        <div class="panel-heading">
+          <div>
+            <div class="heading-with-badge">
+              <p class="eyebrow">ERROR LOGS & AUDIT</p>
+            </div>
+            <h2>System Issues & Delivery Failures</h2>
+            <p class="panel-sub">Centralized error tracking for WhatsApp delivery, webhook parsing, and rate-limits.</p>
+          </div>
+          <div class="issues-controls">
+            <div class="filter-tabs">
+              <button class="tab-btn active" data-filter="all">All Issues</button>
+              <button class="tab-btn" data-filter="unresolved">Unresolved (<span id="unresolved-count">0</span>)</button>
+              <button class="tab-btn" data-filter="resolved">Resolved</button>
+            </div>
+            <button id="clear-resolved-btn" class="button button-light btn-sm">Clear Resolved</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="data-table" id="issues-table">
+            <thead>
+              <tr>
+                <th>Severity</th>
+                <th>Error Type</th>
+                <th>Affected User</th>
+                <th>Error Message / Detail</th>
+                <th>Time</th>
+                <th>Status</th>
+                <th style="text-align: right;">Action</th>
+              </tr>
+            </thead>
+            <tbody id="issues-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Row 4: Enhanced Changelog & Security Login Activity -->
+      <div class="lower-grid">
+        <!-- Enhanced Changelog Table -->
+        <section class="panel changelog-panel">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">CHANGELOG</p>
+              <h2>Published Releases</h2>
+              <p class="panel-sub">History of all version updates deployed to users.</p>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Version</th>
+                  <th>Title & Summary</th>
+                  <th>Release Date</th>
+                  <th>Status</th>
+                  <th>Notified</th>
+                  <th>Author</th>
+                </tr>
+              </thead>
+              <tbody id="versions-table-body"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Security Login Activity -->
+        <section class="panel security-panel">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">SECURITY AUDIT</p>
+              <h2>Admin Login Activity</h2>
+              <p class="panel-sub">Audit trail of administrative access and 2FA authentication logs.</p>
+            </div>
+          </div>
+          <div id="activity-list" class="activity-list"></div>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <!-- Owner Console Footer -->
+  <footer class="admin-footer">
+    <div class="admin-footer-inner">
+      <div class="admin-footer-top">
+        <div class="admin-footer-brand">
+          <span class="brand-text">latent<span>bots</span></span>
+          <span class="console-tag">OWNER CONSOLE</span>
+        </div>
+        <nav class="admin-footer-nav" aria-label="Admin quick navigation">
+          <a href="/" target="_blank">🌐 Live Website</a>
+          <span class="nav-sep">|</span>
+          <a href="/bots.html" target="_blank">🤖 Bots Catalog</a>
+          <span class="nav-sep">|</span>
+          <a href="#stats">📊 Quick Stats</a>
+          <span class="nav-sep">|</span>
+          <a href="#bot-deploy-panel">🚀 Bot Hub</a>
+          <span class="nav-sep">|</span>
+          <a href="#issues-panel">⚠️ System Issues</a>
+        </nav>
+      </div>
+      <div class="admin-footer-bottom">
+        <span class="footer-system-status">
+          <span class="status-live-dot"></span> SECURE ADMIN CONSOLE · SQLITE WAL PERSISTENCE
+        </span>
+        <span class="footer-credits">
+          BUILT BY <strong class="dev-name">BIJENDRA YADAV</strong> · &copy; 2026 LATENTBOTS. ALL RIGHTS RESERVED.
+        </span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- User Edit Dialog -->
+  <dialog id="user-dialog" class="admin-modal">
+    <form method="dialog" id="user-form">
+      <div class="dialog-header">
+        <div>
+          <p class="eyebrow">USER RECORD</p>
+          <h2>Edit User Account</h2>
+        </div>
+        <button class="icon-close" value="cancel" aria-label="Close">×</button>
+      </div>
+      <input type="hidden" name="id">
+      <label>Email Address<input name="email" type="email" required></label>
+      <label>WhatsApp Phone Number<input name="phoneNumber" required></label>
+      <div class="modal-checkboxes">
+        <label class="check-label"><input name="active" type="checkbox"> Account Active</label>
+        <label class="check-label"><input name="isBlocked" type="checkbox"> Block User from Receiving Messages</label>
+      </div>
+      <div class="dialog-actions">
+        <button class="button button-light" value="cancel">Cancel</button>
+        <button class="button button-dark" value="default">Save Changes</button>
+      </div>
+      <p id="user-error" class="error"></p>
+    </form>
+  </dialog>
+
+  <!-- User Issue Inspection Dialog (Red Dot Click) -->
+  <dialog id="user-issue-dialog" class="admin-modal">
+    <div class="dialog-content">
+      <div class="dialog-header">
+        <div>
+          <p class="eyebrow">TROUBLESHOOTING</p>
+          <h2 id="issue-modal-user-email">User Error Details</h2>
+          <p class="panel-sub" id="issue-modal-user-phone"></p>
+        </div>
+        <button class="icon-close" id="close-issue-dialog" aria-label="Close">×</button>
+      </div>
+      <div class="issue-modal-body">
+        <div id="user-issues-list" class="modal-issues-container"></div>
+      </div>
+      <div class="dialog-actions">
+        <button class="button button-light" id="btn-dismiss-issue-dialog">Close</button>
+        <button class="button button-accent" id="btn-resolve-all-user-issues">Mark All Resolved</button>
+      </div>
+    </div>
+  </dialog>
+
+  <script src="admin-auth.js"></script>
+  <script src="bots-panel.js"></script>
+  <script src="updates-panel.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

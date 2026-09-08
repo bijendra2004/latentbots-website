@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Explore and connect intelligent LatentBots WhatsApp automation bots.">
+  <title>Explore Bots - LatentBots</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,400;0,500;1,400&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Header -->
+  <header class="site-header">
+    <a class="brand" href="index.html#home" aria-label="LatentBots home">latent<span>bots</span></a>
+    <nav class="site-nav" aria-label="Main navigation">
+      <a href="index.html#home">Home</a>
+      <a class="active" href="bots.html">Bots</a>
+      <a href="index.html#story">About Us</a>
+      <a href="index.html#developer">Developer</a>
+    </nav>
+    <div class="header-auth" id="header-auth-container">
+      <a class="btn-signin" id="btn-header-signin" href="#signin">Sign In</a>
+      <a class="btn-signup" id="btn-header-signup" href="#signup">Sign Up</a>
+    </div>
+  </header>
+
+  <main>
+    <!-- Bots Hero Section -->
+    <section class="bots-hero section-shell">
+      <div class="bots-hero-copy">
+        <p class="kicker">INTELLIGENT WHATSAPP AUTOMATION</p>
+        <h1>Explore & Connect <em>Latent Bots.</em></h1>
+        <p class="lede">Choose from our specialized bot roster to route emails, alerts, morning briefings, and inbound leads directly into WhatsApp without noise or complex dashboards.</p>
+      </div>
+    </section>
+
+    <!-- Bots Catalog Section -->
+    <section class="bots-catalog section-shell">
+      <div class="bots-table-card">
+        <div class="bots-table-header-row">
+          <div>
+            <span class="eyebrow-chip">BOT ROSTER</span>
+            <h2>Available Bot Catalog</h2>
+          </div>
+          <div class="catalog-tagline">
+            <span class="status-dot online"></span> 4 Bots Active & Ready
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="bots-table">
+            <thead>
+              <tr>
+                <th>Bots</th>
+                <th>Category</th>
+                <th>Last Update Date</th>
+                <th>Version</th>
+                <th style="text-align: right;">Action</th>
+              </tr>
+            </thead>
+            <tbody id="bots-table-body">
+              <!-- Bot 1: Flagship LatentMail -->
+              <tr class="bot-row" data-bot="latentmail">
+                <td>
+                  <div class="bot-info-cell">
+                    <div class="bot-icon-box flagship-icon">
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                    </div>
+                    <div>
+                      <div class="bot-title-group">
+                        <strong class="bot-name">LatentMail WhatsApp Bot</strong>
+                        <span class="badge-flagship">Flagship</span>
+                      </div>
+                      <p class="bot-summary">Forwards priority emails and AI summaries straight to your WhatsApp chat.</p>
+                    </div>
+                  </div>
+                </td>
+                <td><span class="cat-pill">Email Forwarding</span></td>
+                <td><span class="date-text" id="latentmail-last-update">Today, Real-time</span></td>
+                <td><span class="version-tag" id="latentmail-version-badge">v1.0.0</span></td>
+                <td style="text-align: right;">
+                  <button type="button" class="btn-select-bot" data-bot-id="latentmail">Select Bot →</button>
+                </td>
+              </tr>
+
+              <!-- Bot 2: LatentAlert Monitoring Bot -->
+              <tr class="bot-row" data-bot="latentalert">
+                <td>
+                  <div class="bot-info-cell">
+                    <div class="bot-icon-box alert-icon">
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                    </div>
+                    <div>
+                      <div class="bot-title-group">
+                        <strong class="bot-name">LatentAlert System Bot</strong>
+                        <span class="badge-pro">Monitoring</span>
+                      </div>
+                      <p class="bot-summary">Instant critical server downtime, error alerts, and uptime status alerts on WhatsApp.</p>
+                    </div>
+                  </div>
+                </td>
+                <td><span class="cat-pill">DevOps & Health</span></td>
+                <td><span class="date-text">Sep 5, 2026</span></td>
+                <td><span class="version-tag">v1.1.0</span></td>
+                <td style="text-align: right;">
+                  <button type="button" class="btn-select-bot" data-bot-id="latentalert">Select Bot →</button>
+                </td>
+              </tr>
+
+              <!-- Bot 3: LatentDigest Morning Briefing -->
+              <tr class="bot-row" data-bot="latentdigest">
+                <td>
+                  <div class="bot-info-cell">
+                    <div class="bot-icon-box digest-icon">
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="1" y2="12"/><line x1="12" y1="23" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                    </div>
+                    <div>
+                      <div class="bot-title-group">
+                        <strong class="bot-name">LatentDigest Briefing Bot</strong>
+                        <span class="badge-pro">Productivity</span>
+                      </div>
+                      <p class="bot-summary">Curated daily morning briefing of your upcoming schedule, newsletters, and priority unread threads.</p>
+                    </div>
+                  </div>
+                </td>
+                <td><span class="cat-pill">Daily Briefing</span></td>
+                <td><span class="date-text">Sep 4, 2026</span></td>
+                <td><span class="version-tag">v1.0.0</span></td>
+                <td style="text-align: right;">
+                  <button type="button" class="btn-select-bot" data-bot-id="latentdigest">Select Bot →</button>
+                </td>
+              </tr>
+
+              <!-- Bot 4: LatentLead CRM Bot -->
+              <tr class="bot-row" data-bot="latentlead">
+                <td>
+                  <div class="bot-info-cell">
+                    <div class="bot-icon-box lead-icon">
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="12 6 12 12 16 14"/></svg>
+                    </div>
+                    <div>
+                      <div class="bot-title-group">
+                        <strong class="bot-name">LatentLead Inbound Bot</strong>
+                        <span class="badge-pro">Sales & Growth</span>
+                      </div>
+                      <p class="bot-summary">Never lose a prospect. Instant WhatsApp lead alert within 5 seconds of customer inquiry form submission.</p>
+                    </div>
+                  </div>
+                </td>
+                <td><span class="cat-pill">Inbound Leads</span></td>
+                <td><span class="date-text">Sep 3, 2026</span></td>
+                <td><span class="version-tag">v1.0.0</span></td>
+                <td style="text-align: right;">
+                  <button type="button" class="btn-select-bot" data-bot-id="latentlead">Select Bot →</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer" id="contact">
+    <div class="footer-inner">
+      <div class="footer-top">
+        <a class="brand" href="index.html#home" aria-label="LatentBots home">latent<span>bots</span></a>
+        <nav class="footer-nav" aria-label="Footer navigation">
+          <a href="index.html#home">Home</a>
+          <span class="nav-sep">|</span>
+          <a href="bots.html">Bots</a>
+          <span class="nav-sep">|</span>
+          <a href="index.html#story">About Us</a>
+          <span class="nav-sep">|</span>
+          <a href="index.html#developer">Developer</a>
+          <span class="nav-sep">|</span>
+          <a href="#">Privacy Policy</a>
+          <span class="nav-sep">|</span>
+          <a href="#">Terms of Service</a>
+        </nav>
+      </div>
+      <div class="footer-bottom">
+        <span class="footer-disclaimer">INTELLIGENT NOTIFICATIONS. DELIVERED STRAIGHT TO WHATSAPP.</span>
+        <span class="footer-credits">BUILT BY <strong class="dev-credit-name">BIJENDRA YADAV</strong> · &copy; 2026 LATENTBOTS. ALL RIGHTS RESERVED.</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- User Authentication Modal (Gated Login/Signup) -->
+  <dialog id="auth-modal" class="site-modal">
+    <div class="modal-card">
+      <div class="modal-head">
+        <div>
+          <span class="auth-tag">AUTHENTICATION REQUIRED</span>
+          <h2>Sign In to LatentBots</h2>
+          <p class="modal-sub">Enter your email & WhatsApp number to link this bot with your account.</p>
+        </div>
+        <button class="modal-close-btn" id="btn-close-auth" aria-label="Close">×</button>
+      </div>
+      <form id="auth-form">
+        <label>
+          Email Address
+          <input type="email" name="email" id="auth-email" placeholder="name@company.com" required>
+        </label>
+        <label>
+          WhatsApp Phone Number (with country code)
+          <input type="tel" name="phoneNumber" id="auth-phone" placeholder="+91 98765 43210" required>
+        </label>
+        <div class="auth-actions">
+          <button type="submit" class="button button-primary" id="btn-auth-submit">
+            Continue & Select Bot →
+          </button>
+        </div>
+        <p id="auth-error" class="auth-error-msg"></p>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- Center Rising Pop-up Modal (Bot Details & Setup Guide) -->
+  <dialog id="bot-rise-modal" class="site-modal rising-modal">
+    <div class="rising-modal-card">
+      <div class="rising-modal-head">
+        <div class="modal-bot-title-wrap">
+          <div class="bot-modal-icon" id="modal-bot-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          </div>
+          <div>
+            <div class="modal-bot-meta">
+              <span class="cat-pill" id="modal-bot-category">Email Forwarding</span>
+              <span class="version-tag" id="modal-bot-version">v1.0.0</span>
+              <span class="date-text" id="modal-bot-updated">Updated: Today</span>
+            </div>
+            <h2 id="modal-bot-name">LatentMail WhatsApp Bot</h2>
+          </div>
+        </div>
+        <button class="modal-close-btn" id="btn-close-rise" aria-label="Close">×</button>
+      </div>
+
+      <div class="rising-modal-body">
+        <div class="bot-full-desc">
+          <p id="modal-bot-description">LatentMail brings the updates that matter straight to WhatsApp, so you can keep moving without another inbox or complex dashboard to manage.</p>
+        </div>
+
+        <div class="setup-guide-wrap">
+          <h3 class="setup-guide-heading">
+            <span>⚡</span> 3-Step Quick Setup Guide
+          </h3>
+          <div class="setup-steps-grid">
+            <!-- Step 1 -->
+            <div class="setup-step-card">
+              <div class="step-num">01</div>
+              <div class="step-content">
+                <strong id="step1-title">Set Forwarding Rule</strong>
+                <p id="step1-desc">Auto-forward your priority emails or alerts to your dedicated bot address.</p>
+              </div>
+            </div>
+            <!-- Step 2 -->
+            <div class="setup-step-card">
+              <div class="step-num">02</div>
+              <div class="step-content">
+                <strong id="step2-title">Choose Notification Level</strong>
+                <p id="step2-desc">Select full messages or AI-condensed smart summaries for quick reading.</p>
+              </div>
+            </div>
+            <!-- Step 3 -->
+            <div class="setup-step-card">
+              <div class="step-num">03</div>
+              <div class="step-content">
+                <strong id="step3-title">Confirm WhatsApp Link</strong>
+                <p id="step3-desc">Click the button below to verify your WhatsApp chat and receive instant notifications.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Connect Action Footer Area -->
+        <div class="modal-connect-bar">
+          <div class="connect-user-status">
+            <span class="user-avatar-dot"></span>
+            <div>
+              <small>Connecting for account:</small>
+              <strong id="modal-user-display">user@example.com</strong>
+            </div>
+          </div>
+          <button type="button" class="connect-button btn-connect-live" id="btn-connect-whatsapp-live">
+            Connect on WhatsApp <span aria-hidden="true">↗</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </dialog>
+
+  <script src="script.js"></script>
+</body>
+</html>

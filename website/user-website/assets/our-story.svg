@@ -1,0 +1,87 @@
+<svg width="480" height="480" viewBox="0 0 480 480" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Green Quarter-Arc/Sector -->
+  <path d="M185 285C185 160 235 45 308 14V235H185Z" fill="#D8E7BA" fill-opacity="0.9"/>
+
+  <!-- Top-Left Chat Bubble -->
+  <g id="top-bubble">
+    <rect x="88" y="72" width="138" height="52" rx="14" fill="#FFFFFF" stroke="#19312B" stroke-width="2.4"/>
+    <path d="M190 124L205 137L205 124" fill="#FFFFFF"/>
+    <path d="M190 124L205 137L205 124" stroke="#19312B" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>
+    <!-- Overwrite border overlap inside tail -->
+    <line x1="192" y1="124" x2="204" y2="124" stroke="#FFFFFF" stroke-width="3"/>
+    <!-- Bubble Content -->
+    <circle cx="114" cy="98" r="11" fill="#ADC984"/>
+    <line x1="137" y1="93" x2="203" y2="93" stroke="#19312B" stroke-width="2.4" stroke-linecap="round"/>
+    <line x1="137" y1="105" x2="182" y2="105" stroke="#19312B" stroke-width="2.4" stroke-linecap="round"/>
+  </g>
+
+  <!-- Bottom-Left Chat Bubble -->
+  <g id="bottom-bubble">
+    <rect x="48" y="160" width="130" height="50" rx="14" fill="#FFFFFF" stroke="#19312B" stroke-width="2.4"/>
+    <path d="M78 210L68 223L88 210" fill="#FFFFFF"/>
+    <path d="M78 210L68 223L88 210" stroke="#19312B" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>
+    <!-- Overwrite border overlap inside tail -->
+    <line x1="77" y1="210" x2="87" y2="210" stroke="#FFFFFF" stroke-width="3"/>
+    <!-- Bubble Content -->
+    <circle cx="73" cy="185" r="11" fill="#ADC984"/>
+    <line x1="95" y1="180" x2="158" y2="180" stroke="#19312B" stroke-width="2.4" stroke-linecap="round"/>
+    <line x1="95" y1="192" x2="138" y2="192" stroke="#19312B" stroke-width="2.4" stroke-linecap="round"/>
+  </g>
+
+  <!-- Outgoing Green Chat Bubble (Right) -->
+  <g id="right-bubble">
+    <rect x="282" y="142" width="136" height="52" rx="14" fill="#A8CA84" stroke="#19312B" stroke-width="2.4"/>
+    <path d="M302 194L290 205L298 194" fill="#A8CA84"/>
+    <path d="M302 194L290 205L298 194" stroke="#19312B" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>
+    <!-- Overwrite border overlap inside tail -->
+    <line x1="298" y1="194" x2="303" y2="194" stroke="#A8CA84" stroke-width="3"/>
+    <!-- Content lines -->
+    <line x1="332" y1="162" x2="398" y2="162" stroke="#19312B" stroke-width="2.4" stroke-linecap="round"/>
+    <line x1="332" y1="175" x2="375" y2="175" stroke="#19312B" stroke-width="2.4" stroke-linecap="round"/>
+  </g>
+
+  <!-- Person Line Art & Shading -->
+  <g stroke="#19312B" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Hair Contour -->
+    <path d="M280 135C280 95 315 88 358 112C394 132 405 165 400 195C395 240 422 280 420 320" fill="none"/>
+    
+    <!-- Hair Strand on Brow -->
+    <path d="M276 112C276 130 286 148 286 156" fill="none"/>
+    
+    <!-- Profile Silhouette -->
+    <!-- Forehead down to Nose -->
+    <path d="M260 156L241 206C241 209 244 213 249 213" fill="none"/>
+    <!-- Smile Mouth -->
+    <path d="M258 234C268 237 277 235 285 227" fill="none"/>
+    <!-- Chin & Jawline -->
+    <path d="M250 252C256 268 282 288 322 284" fill="none"/>
+
+    <!-- Eye Line -->
+    <path d="M268 180C270 178 274 178 276 181" fill="none"/>
+
+    <!-- Ear & Inner Detail -->
+    <path d="M344 205C352 195 373 198 374 214C375 228 358 243 333 241" fill="none"/>
+    <path d="M356 210C361 213 361 222 346 230" fill="none"/>
+
+    <!-- Dark Neck Accent Patch -->
+    <path d="M278 266C282 288 308 306 315 304C310 278 304 263 278 266Z" fill="#1C302B" stroke="#1C302B" stroke-width="1"/>
+
+    <!-- Neck Base Line -->
+    <path d="M292 315C335 325 385 325 410 320" fill="none"/>
+
+    <!-- Diagonal Smartphone -->
+    <g transform="rotate(-38 135 285)">
+      <rect x="75" y="240" width="135" height="18" rx="7" fill="#FFFFFF" stroke="#19312B" stroke-width="2.4"/>
+    </g>
+
+    <!-- Hand Lines -->
+    <!-- Thumb Gripping Phone Front -->
+    <path d="M165 248C168 268 186 302 186 324" fill="none"/>
+    <!-- Index Finger Along Phone Top -->
+    <path d="M125 240C125 258 145 295 174 320" fill="none"/>
+    <!-- Left Hand & Wrist Outer Line -->
+    <path d="M92 248C90 285 102 332 178 372C181 392 180 415 178 425" fill="none"/>
+    <!-- Inner Wrist Line -->
+    <path d="M245 425C240 375 212 335 186 300" fill="none"/>
+  </g>
+</svg>
