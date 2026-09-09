@@ -25,6 +25,12 @@
   box-sizing: border-box;
 }
 
+html {
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100vw;
+}
+
 body {
   margin: 0;
   background: var(--paper);
@@ -32,6 +38,9 @@ body {
   font-family: 'Manrope', system-ui, -apple-system, sans-serif;
   font-size: 14px;
   line-height: 1.5;
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100vw;
 }
 
 button, input, textarea, select {
@@ -1370,16 +1379,6 @@ input:focus, textarea:focus {
   font-weight: 700;
 }
 
-@media (max-width: 768px) {
-  .admin-footer-inner {
-    padding: 0 16px;
-  }
-  .admin-footer-top, .admin-footer-bottom {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-}
-
 /* ==========================================================
    ADMIN LOGIN CARD STYLES
    ========================================================== */
@@ -1463,6 +1462,153 @@ input:focus, textarea:focus {
   margin: 4px 0 0;
   min-height: 18px;
   text-align: center;
+}
+
+/* Responsive Table Wrappers */
+.table-responsive,
+.table-wrap,
+.users-table-wrap,
+.issues-table-wrap,
+.bots-table-wrap,
+.logs-table-wrap,
+.versions-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .shell {
+    padding: 16px 12px 60px;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+  .topbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
+    padding-bottom: 12px;
+  }
+  .topbar-brand-group {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .system-health-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .health-pill {
+    font-size: 11px;
+    padding: 3px 8px;
+  }
+  .topbar-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 6px;
+    width: 100%;
+  }
+  .topbar-actions button,
+  .topbar-actions a {
+    padding: 8px 6px;
+    font-size: 11.5px;
+    text-align: center;
+    justify-content: center;
+    width: 100%;
+  }
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    width: 100%;
+  }
+  .stat-card {
+    padding: 12px 14px;
+  }
+  .stat-number {
+    font-size: 22px;
+  }
+  .workspace-grid,
+  .lower-grid,
+  .bots-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    width: 100%;
+  }
+  .panel {
+    padding: 18px 14px;
+    border-radius: 12px;
+    width: 100%;
+    overflow-x: hidden;
+  }
+  .panel-heading {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .form-row-2,
+  .form-row-3,
+  .form-row-4 {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .steps-grid-inputs {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .form-footer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+  .form-footer button {
+    width: 100%;
+    justify-content: center;
+  }
+  .login-card {
+    margin: 30px auto;
+    width: calc(100% - 20px);
+    max-width: 100%;
+    padding: 26px 18px;
+    border-radius: 16px;
+  }
+  .admin-footer-inner {
+    padding: 0 16px;
+  }
+  .admin-footer-top,
+  .admin-footer-bottom {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .shell {
+    padding: 12px 8px 50px;
+  }
+  .stats-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .stat-card {
+    padding: 10px 10px;
+  }
+  .stat-number {
+    font-size: 19px;
+  }
+  .topbar-actions {
+    grid-template-columns: 1fr 1fr;
+  }
+  .topbar-actions .btn-preview {
+    grid-column: span 2;
+  }
+  .login-card {
+    padding: 22px 14px;
+    margin: 20px auto;
+  }
 }
 
 

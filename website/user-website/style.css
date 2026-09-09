@@ -2,8 +2,8 @@
 
 :root { --ink: #19312b; --muted: #687971; --line: #d5ddd2; --cream: #f7f7ef; --green: #d7e7a5; --green-deep: #9bb56b; --orange: #ef744c; --white: #fffdf6; }
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
-body { margin: 0; background: var(--cream); color: var(--ink); font-family: Manrope, sans-serif; }
+html { scroll-behavior: smooth; overflow-x: hidden; width: 100%; max-width: 100vw; }
+body { margin: 0; background: var(--cream); color: var(--ink); font-family: Manrope, sans-serif; overflow-x: hidden; width: 100%; max-width: 100vw; }
 a { color: inherit; }
 .site-header, .section-shell { width: min(1160px, calc(100% - 48px)); margin: 0 auto; }
 .site-header { min-height: 90px; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 24px; }
@@ -1204,8 +1204,10 @@ h1 em, h2 em { font-family: Georgia, serif; font-weight: 400; letter-spacing: -.
 }
 
 @media (max-width: 768px) {
+  .site-header, .section-shell { width: min(100% - 28px, 600px); }
+  .site-header { min-height: 70px; }
   .bots-table-card {
-    padding: 22px 18px;
+    padding: 22px 16px;
   }
   .setup-steps-grid {
     grid-template-columns: 1fr;
@@ -1216,6 +1218,183 @@ h1 em, h2 em { font-family: Georgia, serif; font-weight: 400; letter-spacing: -.
   }
   .btn-connect-live {
     width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Specific Phone Screens (< 600px) */
+@media (max-width: 600px) {
+  .site-header, .section-shell {
+    width: calc(100% - 24px);
+    margin: 0 auto;
+  }
+  .site-header {
+    min-height: 64px;
+    gap: 12px;
+  }
+  .brand {
+    font-size: 23px;
+  }
+  .header-auth {
+    gap: 6px;
+  }
+  .btn-signin {
+    padding: 6px 8px;
+    font-size: 12px;
+  }
+  .btn-signup {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+  .user-auth-pill {
+    max-width: 140px;
+    font-size: 11.5px;
+    padding: 4px 8px;
+  }
+  .user-auth-pill span:last-child {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Hero Section & Card Phone Fit */
+  .hero-wrapper-outer {
+    padding: 16px 0 10px;
+  }
+  .hero-slider-viewport {
+    width: calc(100% - 24px);
+  }
+  .hero-card {
+    padding: 24px 16px 20px;
+    gap: 20px;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+  .hero-card h1 {
+    font-size: clamp(26px, 8.5vw, 38px);
+    line-height: 1.1;
+    margin: 0 0 16px;
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
+  .kicker {
+    font-size: 11.5px;
+    margin-bottom: 10px;
+    letter-spacing: 0.08em;
+  }
+  .lede {
+    font-size: 14px;
+    line-height: 1.55;
+    margin-bottom: 18px;
+  }
+  .hero-cta-group {
+    width: 100%;
+  }
+  .connect-button {
+    width: 100%;
+    justify-content: center;
+    padding: 12px 16px;
+    font-size: 12.5px;
+    box-sizing: border-box;
+  }
+  .hero-card-badge {
+    top: 10px;
+    right: 10px;
+    font-size: 9.5px;
+    padding: 3px 7px;
+  }
+  .notification-art {
+    min-height: 200px;
+    margin-top: 10px;
+    border-radius: 12px;
+  }
+  .notification-card {
+    width: min(260px, 88%);
+    padding: 12px 14px;
+    transform: translate(-50%, -50%) rotate(-3deg);
+    box-shadow: 6px 6px 0 var(--ink);
+  }
+  .card-brand {
+    font-size: 17px;
+  }
+
+  /* Story, Features, & Developer */
+  .story {
+    padding: 40px 0;
+    gap: 30px;
+  }
+  .story h2 {
+    font-size: clamp(28px, 8vw, 42px);
+  }
+  .story-copy p:not(.kicker) {
+    font-size: 15px;
+    line-height: 1.6;
+  }
+  .features {
+    padding: 40px 0 50px;
+  }
+  .section-intro h2 {
+    font-size: clamp(26px, 7.5vw, 36px);
+  }
+  .feature-card {
+    padding: 22px 16px;
+  }
+  .developer-section {
+    padding: 15px 0 50px;
+  }
+  .developer-card {
+    padding: 24px 16px;
+  }
+  .dev-contact-list {
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+  }
+  .dev-contact-item {
+    font-size: 12.5px;
+    width: 100%;
+    word-break: break-all;
+  }
+  .tech-tags {
+    gap: 6px;
+  }
+  .tech-tags span {
+    font-size: 10.5px;
+    padding: 4px 8px;
+  }
+
+  /* Modals Phone Optimization */
+  .modal-card {
+    width: calc(100vw - 20px);
+    max-width: 100%;
+    padding: 22px 16px;
+    border-radius: 16px;
+    margin: 0 10px;
+    box-sizing: border-box;
+  }
+  .rising-modal-card {
+    width: calc(100vw - 16px);
+    max-width: 100%;
+    padding: 20px 14px;
+    border-radius: 16px;
+    margin: 0 8px;
+    box-sizing: border-box;
+  }
+  #auth-otp-input {
+    letter-spacing: clamp(4px, 2vw, 7px);
+    font-size: 19px;
+    padding: 10px;
+  }
+  .latent-toast {
+    width: calc(100vw - 32px);
+    max-width: 360px;
+    padding: 12px 16px;
+    font-size: 12.5px;
+    bottom: 16px;
+    box-sizing: border-box;
+    text-align: center;
     justify-content: center;
   }
 }
