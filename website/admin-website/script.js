@@ -451,13 +451,9 @@ const Dashboard = (() => {
 
   const refreshAllBtn = document.querySelector('#refresh-all');
   if (refreshAllBtn) {
-    refreshAllBtn.addEventListener('click', async () => {
+    refreshAllBtn.addEventListener('click', () => {
       refreshAllBtn.classList.add('spinning');
-      try {
-        await loadAll();
-      } finally {
-        setTimeout(() => refreshAllBtn.classList.remove('spinning'), 500);
-      }
+      window.location.reload();
     });
   }
 

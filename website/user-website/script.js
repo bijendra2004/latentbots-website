@@ -139,6 +139,10 @@ async function loadDynamicBots() {
           badge_status: bot.badge_status || 'LIVE',
           updated: bot.updated_at || 'Recent',
           description: bot.description,
+          kicker: bot.kicker || '',
+          heading: bot.heading || '',
+          lede: bot.lede || '',
+          microcopy: bot.microcopy || '',
           steps: bot.steps && bot.steps.length ? bot.steps : (BOTS_DATABASE[bot.id]?.steps || []),
           waText: bot.wa_text || (BOTS_DATABASE[bot.id]?.waText || 'Hi, I want to connect on WhatsApp!')
         };
@@ -157,9 +161,28 @@ function syncHeroCardVersions() {
     const botId = card.dataset.bot;
     if (botId && BOTS_DATABASE[botId]) {
       const bot = BOTS_DATABASE[botId];
+
+      // Kicker
+      const kickerEl = card.querySelector('.kicker');
+      if (kickerEl && bot.kicker) kickerEl.textContent = bot.kicker;
+
+      // Heading (supports formatted HTML like <br> or <em>)
+      const headingEl = card.querySelector('h1');
+      if (headingEl && bot.heading) headingEl.innerHTML = bot.heading;
+
+      // Lede
+      const ledeEl = card.querySelector('.lede');
+      if (ledeEl && bot.lede) ledeEl.textContent = bot.lede;
+
+      // Microcopy
+      const microcopyEl = card.querySelector('.microcopy');
+      if (microcopyEl && bot.microcopy) microcopyEl.textContent = bot.microcopy;
+
+      // Version tag
       const verEl = card.querySelector('.version-num');
       if (verEl && bot.version) verEl.textContent = bot.version;
 
+      // Badge Status (LIVE, COMING SOON, BETA, MAINTENANCE)
       const badgeEl = card.querySelector('.hero-card-badge');
       if (badgeEl && bot.badge_status) {
         const badgeState = bot.badge_status.toUpperCase();
@@ -251,9 +274,16 @@ fetch('/api/latest-version', { cache: 'no-store' })
   .catch(() => {});
 
 // Connect button on Home page
-const connectLink = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent('Hi, I want to connect on WhatsApp')}`;
 document.querySelectorAll('.connect-button:not(.btn-connect-live):not(.hero-connect-btn)').forEach((button) => {
-  button.href = connectLink;
+  button.addEventListener('click', (e) => {
+    const user = getCurrentUser();
+    if (!user) {
+      e.preventDefault();
+      openAuthModal('Sign In to Connect', 'Enter your email to connect with LatentBots on WhatsApp.');
+    } else {
+      button.href = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent('Hi, I want to connect on WhatsApp')}`;
+    }
+  });
 });
 
 // Toast Notification Helper
@@ -440,16 +470,7 @@ if (authVerifyForm) {
       // Login success
       setCurrentUser(data.user);
       closeAuthModal();
-      showToast(`Welcome back, ${data.user.email}!`, '✅');
-
-      // Continue to bot connection if active
-      const botToConnect = activeSelectedBot || BOTS_DATABASE.latentmail;
-      if (botRiseModal && botToConnect) {
-        openRisingModal(botToConnect);
-      } else if (botToConnect) {
-        const waUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(botToConnect.waText || 'Hi, I want to activate this bot!')}`;
-        window.open(waUrl, '_blank');
-      }
+      showToast(`Successfully signed in as ${data.user.email}!`, '✅');
     } catch (err) {
       if (authVerifyMsg) {
         authVerifyMsg.textContent = `❌ ${err.message}`;
