@@ -27,7 +27,8 @@ function bumpVersion(currentVer) {
 
 async function loadAdminBots() {
   try {
-    const res = await fetch('/api/bots?all=true', { cache: 'no-store' });
+    const fetchFn = window.adminFetch || fetch;
+    const res = await fetchFn('/api/bots?all=true', { cache: 'no-store' });
     if (!res.ok) throw new Error('Failed to load bots');
     const data = await res.json();
     activeBotsList = data.bots || [];
@@ -136,7 +137,8 @@ function renderDeployedBotsTable() {
       select.disabled = true;
 
       try {
-        const res = await fetch(`/api/bots/${botId}/badge`, {
+        const fetchFn = window.adminFetch || fetch;
+        const res = await fetchFn(`/api/bots/${botId}/badge`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ badge_status: newBadge })
@@ -180,7 +182,8 @@ function renderDeployedBotsTable() {
       const botName = btn.dataset.botName;
       if (confirm(`Are you sure you want to remove "${botName}" (#${botId}) from the system?`)) {
         try {
-          const res = await fetch(`/api/bots/${botId}`, { method: 'DELETE' });
+          const fetchFn = window.adminFetch || fetch;
+          const res = await fetchFn(`/api/bots/${botId}`, { method: 'DELETE' });
           if (res.ok) {
             await loadAdminBots();
             resetBotDeployForm();
@@ -461,7 +464,8 @@ function initBotsPanel() {
           file: pendingUploadedFile
         };
 
-        const res = await fetch('/api/bots', {
+        const fetchFn = window.adminFetch || fetch;
+        const res = await fetchFn('/api/bots', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)

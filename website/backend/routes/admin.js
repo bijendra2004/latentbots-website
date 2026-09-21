@@ -15,7 +15,9 @@ function logLogin(email, success, request) {
 
 function requireAdmin(request, response, next) {
   try {
-    const token = request.cookies.latentmail_admin;
+    const authHeader = request.headers.authorization || request.headers.Authorization;
+    const bearerToken = authHeader && authHeader.startsWith('Bearer ') ? authHeader.slice(7).trim() : null;
+    const token = request.cookies?.latentmail_admin || bearerToken;
     if (token) {
       const payload = jwt.verify(token, config.jwtSecret);
       if (payload.role === 'admin') {
@@ -62,7 +64,7 @@ router.post('/login', async (request, response) => {
     secure: config.isProduction,
     maxAge: 8 * 60 * 60 * 1000
   });
-  response.json({ authenticated: true, email });
+  response.json({ authenticated: true, email, token });
 });
 
 router.post('/logout', (request, response) => {

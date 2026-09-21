@@ -123,6 +123,38 @@ function updateHeaderAuthUI() {
   }
 }
 
+// Initialize from cached roster immediately to prevent any flash of outdated status
+function initFromCachedRoster() {
+  try {
+    const raw = localStorage.getItem('latentbots_cached_roster');
+    if (!raw) return;
+    const cachedBots = JSON.parse(raw);
+    if (Array.isArray(cachedBots) && cachedBots.length > 0) {
+      cachedBots.forEach((bot) => {
+        BOTS_DATABASE[bot.id] = {
+          id: bot.id,
+          name: bot.name,
+          category: bot.category,
+          version: bot.version,
+          badge_status: (bot.badge_status || 'LIVE').toUpperCase(),
+          updated: bot.updated_at || 'Recent',
+          description: bot.description,
+          kicker: bot.kicker || '',
+          heading: bot.heading || '',
+          lede: bot.lede || '',
+          microcopy: bot.microcopy || '',
+          steps: bot.steps && bot.steps.length ? bot.steps : (BOTS_DATABASE[bot.id]?.steps || []),
+          waText: bot.wa_text || (BOTS_DATABASE[bot.id]?.waText || 'Hi, I want to connect on WhatsApp!')
+        };
+      });
+      syncHeroCardVersions();
+      renderBotsCatalogTable(cachedBots);
+    }
+  } catch (e) {
+    console.warn('Could not parse cached bots roster:', e);
+  }
+}
+
 // Fetch dynamic bots list and sync website catalog & database
 async function loadDynamicBots() {
   try {
@@ -136,7 +168,7 @@ async function loadDynamicBots() {
           name: bot.name,
           category: bot.category,
           version: bot.version,
-          badge_status: bot.badge_status || 'LIVE',
+          badge_status: (bot.badge_status || 'LIVE').toUpperCase(),
           updated: bot.updated_at || 'Recent',
           description: bot.description,
           kicker: bot.kicker || '',
@@ -147,6 +179,11 @@ async function loadDynamicBots() {
           waText: bot.wa_text || (BOTS_DATABASE[bot.id]?.waText || 'Hi, I want to connect on WhatsApp!')
         };
       });
+
+      // Save to localStorage so future page visits immediately reflect admin changes without delay
+      try {
+        localStorage.setItem('latentbots_cached_roster', JSON.stringify(data.bots));
+      } catch {}
 
       renderBotsCatalogTable(data.bots);
       syncHeroCardVersions();
@@ -201,17 +238,25 @@ function renderBotsCatalogTable(bots) {
   if (!tbody) return;
 
   tbody.innerHTML = bots.map((bot) => {
+    const badge = (bot.badge_status || 'LIVE').toUpperCase();
+    const isLive = badge === 'LIVE';
+
+    const actionButton = isLive
+      ? `<button type="button" class="btn-select-bot" data-bot-id="${bot.id}">Select Bot →</button>`
+      : `<button type="button" class="btn-select-bot btn-select-bot-disabled" data-bot-id="${bot.id}" disabled title="${escapeHtml(bot.name)} is currently ${badge}">${badge === 'COMING SOON' ? 'Coming Soon ⏳' : badge} (Inactive)</button>`;
+
     return `
-      <tr class="bot-row" data-bot="${bot.id}">
+      <tr class="bot-row ${!isLive ? 'bot-row-inactive' : ''}" data-bot="${bot.id}" data-live="${isLive ? 'true' : 'false'}">
         <td>
           <div class="bot-info-cell">
-            <div class="bot-icon-box flagship-icon">
+            <div class="bot-icon-box flagship-icon ${!isLive ? 'icon-box-muted' : ''}">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
             </div>
             <div>
               <div class="bot-title-group">
                 <strong class="bot-name">${escapeHtml(bot.name)}</strong>
                 <span class="badge-flagship">${escapeHtml(bot.category)}</span>
+                ${!isLive ? `<span class="badge-row-status">${badge}</span>` : ''}
               </div>
               <p class="bot-summary">${escapeHtml(bot.description)}</p>
             </div>
@@ -221,7 +266,7 @@ function renderBotsCatalogTable(bots) {
         <td><span class="date-text">${escapeHtml(bot.updated_at || 'Today')}</span></td>
         <td><span class="version-tag">${escapeHtml(bot.version)}</span></td>
         <td style="text-align: right;">
-          <button type="button" class="btn-select-bot" data-bot-id="${bot.id}">Select Bot →</button>
+          ${actionButton}
         </td>
       </tr>
     `;
@@ -243,8 +288,12 @@ function attachBotRowListeners() {
       const botObj = BOTS_DATABASE[botKey] || BOTS_DATABASE.latentmail;
       activeSelectedBot = botObj;
 
-      if (botObj.badge_status === 'COMING SOON') {
-        showToast(`✨ ${botObj.name} is coming soon to WhatsApp!`, '🟡');
+      const isLive = (botObj.badge_status || 'LIVE').toUpperCase() === 'LIVE';
+
+      if (!isLive) {
+        e.preventDefault();
+        e.stopPropagation();
+        showToast(`✨ ${botObj.name} is currently ${botObj.badge_status || 'Coming Soon'}. Available soon!`, '🟡');
         return;
       }
 
@@ -713,9 +762,10 @@ document.querySelectorAll('.hero-connect-btn').forEach((btn) => {
 
     const card = btn.closest('.hero-card');
     const badgeText = card?.querySelector('.badge-text')?.textContent?.trim().toUpperCase();
-    const isComingSoon = (bot.badge_status === 'COMING SOON') || (badgeText === 'COMING SOON');
+    const currentStatus = (bot.badge_status || badgeText || 'LIVE').toUpperCase();
+    const isLive = currentStatus === 'LIVE';
 
-    if (isComingSoon) {
+    if (!isLive) {
       // Highlight the top-right corner badge and show notification
       triggerComingSoonHighlight(card, bot.name);
       return;
@@ -740,6 +790,7 @@ document.querySelectorAll('.hero-connect-btn').forEach((btn) => {
 
 // Initial UI Setup & Load Dynamic Bots
 updateHeaderAuthUI();
+initFromCachedRoster();
 loadDynamicBots();
 
 // Handle responsive window resize

@@ -1,4 +1,5 @@
 const Dashboard = (() => {
+  const fetchAuth = (...args) => (window.adminFetch || fetch)(...args);
   const usersBody = document.querySelector('#users-body');
   const issuesBody = document.querySelector('#issues-body');
   const versionsTableBody = document.querySelector('#versions-table-body');
@@ -39,7 +40,7 @@ const Dashboard = (() => {
 
   async function loadUsers() {
     try {
-      const response = await fetch('/api/users');
+      const response = await fetchAuth('/api/users');
       if (!response.ok) return;
       const { users } = await response.json();
 
@@ -103,7 +104,7 @@ const Dashboard = (() => {
         const currentBlocked = btn.dataset.blocked === '1';
         btn.disabled = true;
         try {
-          const res = await fetch(`/api/users/${userId}/toggle-block`, {
+          const res = await fetchAuth(`/api/users/${userId}/toggle-block`, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ isBlocked: !currentBlocked })
@@ -131,9 +132,9 @@ const Dashboard = (() => {
   async function updateKPIStats(users) {
     try {
       const [issuesStatsRes, versionsRes, logsRes] = await Promise.allSettled([
-        fetch('/api/issues/stats').then(r => r.json()),
-        fetch('/api/versions').then(r => r.json()),
-        fetch('/api/logs').then(r => r.json())
+        fetchAuth('/api/issues/stats').then(r => r.json()),
+        fetchAuth('/api/versions').then(r => r.json()),
+        fetchAuth('/api/logs').then(r => r.json())
       ]);
 
       const issueStats = issuesStatsRes.status === 'fulfilled' ? issuesStatsRes.value?.stats || { unresolved: 0 } : { unresolved: 0 };
@@ -179,7 +180,7 @@ const Dashboard = (() => {
       if (currentIssueFilter !== 'all') {
         url += `?status=${currentIssueFilter}`;
       }
-      const response = await fetch(url);
+      const response = await fetchAuth(url);
       if (!response.ok) return;
       const { issues } = await response.json();
 
@@ -222,7 +223,7 @@ const Dashboard = (() => {
       btn.addEventListener('click', async () => {
         btn.disabled = true;
         try {
-          const res = await fetch(`/api/issues/${btn.dataset.resolveIssue}/resolve`, { method: 'PATCH' });
+          const res = await fetchAuth(`/api/issues/${btn.dataset.resolveIssue}/resolve`, { method: 'PATCH' });
           if (res.ok) {
             await Promise.all([loadIssues(), loadUsers()]);
           }
@@ -241,7 +242,7 @@ const Dashboard = (() => {
     issueDialog.showModal();
 
     try {
-      const res = await fetch(`/api/issues/user/${userId}`);
+      const res = await fetchAuth(`/api/issues/user/${userId}`);
       if (!res.ok) throw new Error('Failed to load issues');
       const { issues } = await res.json();
 
@@ -269,7 +270,7 @@ const Dashboard = (() => {
     if (!activeInspectUserId) return;
     btnResolveAllUserIssues.disabled = true;
     try {
-      const res = await fetch(`/api/issues/user/${activeInspectUserId}/resolve-all`, { method: 'PATCH' });
+      const res = await fetchAuth(`/api/issues/user/${activeInspectUserId}/resolve-all`, { method: 'PATCH' });
       if (res.ok) {
         issueDialog.close();
         await Promise.all([loadUsers(), loadIssues()]);
@@ -284,7 +285,7 @@ const Dashboard = (() => {
 
   async function loadVersions() {
     try {
-      const response = await fetch('/api/versions');
+      const response = await fetchAuth('/api/versions');
       if (!response.ok) return;
       const { versions } = await response.json();
 
@@ -313,7 +314,7 @@ const Dashboard = (() => {
 
   async function loadTraffic() {
     try {
-      const response = await fetch('/api/logs');
+      const response = await fetchAuth('/api/logs');
       if (!response.ok) return;
       const { logs } = await response.json();
 
@@ -339,7 +340,7 @@ const Dashboard = (() => {
 
   async function loadActivity() {
     try {
-      const response = await fetch('/api/admin/login-activity');
+      const response = await fetchAuth('/api/admin/login-activity');
       if (!response.ok) return;
       const { activity } = await response.json();
 
@@ -371,7 +372,7 @@ const Dashboard = (() => {
     body.active = userForm.elements.active.checked;
     body.isBlocked = userForm.elements.isBlocked.checked;
 
-    const response = await fetch(`/api/users/${body.id}`, {
+    const response = await fetchAuth(`/api/users/${body.id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body)
@@ -396,7 +397,7 @@ const Dashboard = (() => {
 
       const body = Object.fromEntries(new FormData(updateForm));
       try {
-        const response = await fetch('/api/versions', {
+        const response = await fetchAuth('/api/versions', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(body)
@@ -445,7 +446,7 @@ const Dashboard = (() => {
   });
 
   document.querySelector('#clear-resolved-btn').addEventListener('click', async () => {
-    await fetch('/api/issues/resolved', { method: 'DELETE' });
+    await fetchAuth('/api/issues/resolved', { method: 'DELETE' });
     await loadIssues();
   });
 

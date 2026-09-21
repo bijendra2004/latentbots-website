@@ -1,3 +1,23 @@
+// Global helper for authenticated admin API calls
+window.adminFetch = async function(url, options = {}) {
+  const token = localStorage.getItem('latentmail_admin_token');
+  const opts = { ...options };
+  opts.credentials = 'include';
+  opts.headers = { ...(opts.headers || {}) };
+  if (token) {
+    opts.headers['Authorization'] = `Bearer ${token}`;
+  }
+  const res = await fetch(url, opts);
+  if (res.status === 401) {
+    // If unauthorized, clear saved token and show login
+    localStorage.removeItem('latentmail_admin_token');
+    if (typeof AdminAuth !== 'undefined' && AdminAuth.showLogin) {
+      AdminAuth.showLogin();
+    }
+  }
+  return res;
+};
+
 const AdminAuth = (() => {
   const loginView = document.querySelector('#login-view');
   const dashboardView = document.querySelector('#dashboard-view');
@@ -17,7 +37,7 @@ const AdminAuth = (() => {
 
   async function checkSession() {
     try {
-      const response = await fetch('/api/admin/session', { credentials: 'include' });
+      const response = await window.adminFetch('/api/admin/session');
       if (response.ok) {
         showDashboard();
       } else {
@@ -33,21 +53,37 @@ const AdminAuth = (() => {
     loginError.textContent = '';
     const body = Object.fromEntries(new FormData(loginForm));
     try {
-      const response = await fetch('/api/admin/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body), credentials: 'include' });
+      const response = await fetch('/api/admin/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+        credentials: 'include'
+      });
       const result = await response.json();
       if (!response.ok) throw new Error(result.error);
+      if (result.token) {
+        localStorage.setItem('latentmail_admin_token', result.token);
+      }
       showDashboard();
-    } catch (error) { loginError.textContent = error.message || 'Unable to sign in.'; }
+    } catch (error) {
+      loginError.textContent = error.message || 'Unable to sign in.';
+    }
   });
 
-  document.querySelector('#logout-button').addEventListener('click', async () => {
-    await fetch('/api/admin/logout', { method: 'POST', credentials: 'include' });
-    window.location.reload();
-  });
+  const logoutBtn = document.querySelector('#logout-button');
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', async () => {
+      try {
+        await window.adminFetch('/api/admin/logout', { method: 'POST' });
+      } catch {}
+      localStorage.removeItem('latentmail_admin_token');
+      window.location.reload();
+    });
+  }
 
   // Check if already logged in, otherwise show login form
   showLogin();
   checkSession();
 
-  return { showDashboard, checkSession };
+  return { showDashboard, showLogin, checkSession };
 })();

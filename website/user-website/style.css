@@ -734,6 +734,41 @@ h1 em, h2 em { font-family: Georgia, serif; font-weight: 400; letter-spacing: -.
   transform: translate(1px, 1px);
 }
 
+.btn-select-bot-disabled,
+.btn-select-bot:disabled {
+  background: #e7ede5 !important;
+  color: #7b8e84 !important;
+  border-color: #ccd8ca !important;
+  box-shadow: none !important;
+  cursor: not-allowed !important;
+  opacity: 0.75;
+  pointer-events: none;
+  transform: none !important;
+}
+
+.bot-row-inactive {
+  opacity: 0.85;
+}
+.bot-row-inactive:hover td {
+  background: rgba(0, 0, 0, 0.02) !important;
+}
+
+.badge-row-status {
+  font: 700 10px 'DM Mono', monospace;
+  color: #8c5b00;
+  background: #fff3d4;
+  border: 1px solid #ffe08a;
+  padding: 2px 6px;
+  border-radius: 4px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.icon-box-muted {
+  filter: grayscale(0.5);
+  opacity: 0.75;
+}
+
 /* User Auth Pill in Header */
 .user-auth-pill {
   display: inline-flex;
