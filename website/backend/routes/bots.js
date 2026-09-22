@@ -12,6 +12,9 @@ const botFilesDir = path.resolve(path.dirname(config.dbPath), 'bot-files');
 // Public: Get all active bots (or all for admin if query ?all=true)
 router.get('/', (req, res) => {
   try {
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
     const includeInactive = req.query.all === 'true';
     const bots = botModel.getAllBots(includeInactive);
 
