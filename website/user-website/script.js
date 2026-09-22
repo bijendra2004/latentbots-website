@@ -712,7 +712,7 @@ function prevHeroSlide() {
 
 function startHeroAutoSlide() {
   stopHeroAutoSlide();
-  heroSlideTimer = setInterval(nextHeroSlide, 4000);
+  heroSlideTimer = setInterval(nextHeroSlide, 2600); // Snappy, active 2.6s interval
 }
 
 function stopHeroAutoSlide() {
@@ -741,14 +741,26 @@ document.querySelectorAll('#hero-slider-dots .hero-dot').forEach((dot) => {
   });
 });
 
-// Pause on hover (Desktop)
+// Pause on hover ONLY for desktop with real mouse (NEVER on touch devices/mobile)
 const heroOuter = document.getElementById('home');
+const hasFinePointer = () => window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 if (heroOuter) {
-  heroOuter.addEventListener('mouseenter', stopHeroAutoSlide);
+  heroOuter.addEventListener('mouseenter', () => {
+    if (hasFinePointer()) stopHeroAutoSlide();
+  });
   heroOuter.addEventListener('mouseleave', () => {
-    if (!isPointerDown) startHeroAutoSlide();
+    if (hasFinePointer() && !isPointerDown) startHeroAutoSlide();
   });
 }
+
+// Ensure auto-slide resumes when user returns to tab
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) {
+    stopHeroAutoSlide();
+  } else {
+    startHeroAutoSlide();
+  }
+});
 
 // Recalculate position on window resize
 window.addEventListener('resize', () => {
@@ -809,9 +821,10 @@ function onTouchMove(e) {
   const diffY = currentY - startY;
 
   if (!isDragging) {
-    // If vertical scrolling dominates, cancel horizontal gesture
+    // If vertical scrolling dominates, cancel horizontal gesture and resume auto-slide
     if (Math.abs(diffY) > Math.abs(diffX) && Math.abs(diffY) > 8) {
       isPointerDown = false;
+      startHeroAutoSlide();
       return;
     }
     if (Math.abs(diffX) > 8) {
@@ -831,12 +844,14 @@ function onTouchMove(e) {
 }
 
 function onTouchEnd() {
-  if (!isPointerDown && !isHorizontalSwipe) return;
+  const wasSwiping = isHorizontalSwipe;
   isPointerDown = false;
+  isHorizontalSwipe = false;
+  isDragging = false;
 
-  if (isHorizontalSwipe) {
-    heroTrack.style.transition = 'transform 0.38s cubic-bezier(0.22, 1, 0.36, 1)';
-    const threshold = Math.min(60, window.innerWidth * 0.16);
+  if (wasSwiping && heroTrack) {
+    heroTrack.style.transition = 'transform 0.32s cubic-bezier(0.22, 1, 0.36, 1)';
+    const threshold = Math.min(50, window.innerWidth * 0.15);
     if (dragDiffX < -threshold) {
       nextHeroSlide();
     } else if (dragDiffX > threshold) {
@@ -846,8 +861,6 @@ function onTouchEnd() {
     }
   }
 
-  isHorizontalSwipe = false;
-  isDragging = false;
   startHeroAutoSlide();
 }
 

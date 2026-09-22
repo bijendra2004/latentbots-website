@@ -1,9 +1,54 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap');
 
-:root { --ink: #19312b; --muted: #687971; --line: #d5ddd2; --cream: #f7f7ef; --green: #d7e7a5; --green-deep: #9bb56b; --orange: #ef744c; --white: #fffdf6; }
+:root {
+  color-scheme: light only;
+  --ink: #19312b;
+  --muted: #687971;
+  --line: #d5ddd2;
+  --cream: #f7f7ef;
+  --green: #d7e7a5;
+  --green-deep: #9bb56b;
+  --orange: #ef744c;
+  --white: #fffdf6;
+}
+
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; overflow-x: hidden; width: 100%; max-width: 100vw; }
-body { margin: 0; background: var(--cream); color: var(--ink); font-family: Manrope, sans-serif; overflow-x: hidden; width: 100%; max-width: 100vw; }
+html {
+  color-scheme: light only;
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100vw;
+  background-color: #f7f7ef !important;
+}
+
+body {
+  color-scheme: light only;
+  margin: 0;
+  background: var(--cream) !important;
+  color: var(--ink) !important;
+  font-family: Manrope, sans-serif;
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100vw;
+}
+
+/* Force light theme on phones with dark mode turned on */
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: light only;
+  }
+  html, body {
+    color-scheme: light only;
+    background-color: #f7f7ef !important;
+    color: #19312b !important;
+  }
+  .hero-card {
+    background: #fffdf6 !important;
+    color: #19312b !important;
+  }
+}
+
 a { color: inherit; }
 .site-header, .section-shell { width: min(1160px, calc(100% - 48px)); margin: 0 auto; }
 .site-header { min-height: 90px; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 24px; }
