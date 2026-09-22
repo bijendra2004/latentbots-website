@@ -669,16 +669,17 @@ if (btnConnectLive) {
 }
 
 // ==========================================================
-// HERO CARD CAROUSEL — Physical cards slide via translateX
+// HERO CARD CAROUSEL — Physical cards slide via translateX & Swiping
 // ==========================================================
 
 const heroTrack = document.getElementById('hero-slider-track');
+const heroViewport = document.querySelector('.hero-slider-viewport');
 const heroCards = document.querySelectorAll('.hero-card');
 const HERO_CARD_COUNT = heroCards.length || 4;
 let heroCurrentIndex = 0;
 let heroSlideTimer = null;
 
-function slideHeroTo(index) {
+function slideHeroTo(index, smooth = true) {
   if (!heroTrack) return;
   const cards = heroTrack.querySelectorAll('.hero-card');
   if (!cards.length) return;
@@ -686,6 +687,11 @@ function slideHeroTo(index) {
   heroCurrentIndex = (index + cards.length) % cards.length;
   const targetCard = cards[heroCurrentIndex];
   if (targetCard) {
+    if (smooth) {
+      heroTrack.style.transition = 'transform 0.38s cubic-bezier(0.22, 1, 0.36, 1)';
+    } else {
+      heroTrack.style.transition = 'none';
+    }
     const offset = targetCard.offsetLeft;
     heroTrack.style.transform = `translateX(-${offset}px)`;
   }
@@ -735,11 +741,184 @@ document.querySelectorAll('#hero-slider-dots .hero-dot').forEach((dot) => {
   });
 });
 
-// Pause on hover
+// Pause on hover (Desktop)
 const heroOuter = document.getElementById('home');
 if (heroOuter) {
   heroOuter.addEventListener('mouseenter', stopHeroAutoSlide);
-  heroOuter.addEventListener('mouseleave', startHeroAutoSlide);
+  heroOuter.addEventListener('mouseleave', () => {
+    if (!isPointerDown) startHeroAutoSlide();
+  });
+}
+
+// Recalculate position on window resize
+window.addEventListener('resize', () => {
+  slideHeroTo(heroCurrentIndex, false);
+});
+
+// ----------------------------------------------------------
+// Touch & Mouse Drag Gestures (Swipe Left / Right on All Screens)
+// ----------------------------------------------------------
+let isPointerDown = false;
+let startX = 0;
+let startY = 0;
+let prevTranslate = 0;
+let isDragging = false;
+let isHorizontalSwipe = false;
+let dragDiffX = 0;
+let dragOccurred = false;
+
+if (heroViewport && heroTrack) {
+  // Mobile / Tablet Touch Events
+  heroViewport.addEventListener('touchstart', onTouchStart, { passive: true });
+  heroViewport.addEventListener('touchmove', onTouchMove, { passive: false });
+  heroViewport.addEventListener('touchend', onTouchEnd);
+  heroViewport.addEventListener('touchcancel', onTouchEnd);
+
+  // Desktop Mouse Drag Events
+  heroViewport.addEventListener('mousedown', onMouseDown);
+  window.addEventListener('mousemove', onMouseMove);
+  window.addEventListener('mouseup', onMouseUp);
+
+  // Prevent ghost image drag
+  heroViewport.addEventListener('dragstart', (e) => e.preventDefault());
+}
+
+function onTouchStart(e) {
+  if (!heroTrack) return;
+  const cards = heroTrack.querySelectorAll('.hero-card');
+  if (!cards.length) return;
+
+  stopHeroAutoSlide();
+  isPointerDown = true;
+  isDragging = false;
+  isHorizontalSwipe = false;
+  dragDiffX = 0;
+  dragOccurred = false;
+
+  startX = e.touches[0].clientX;
+  startY = e.touches[0].clientY;
+  const targetCard = cards[heroCurrentIndex];
+  prevTranslate = targetCard ? targetCard.offsetLeft : 0;
+}
+
+function onTouchMove(e) {
+  if (!isPointerDown) return;
+  const currentX = e.touches[0].clientX;
+  const currentY = e.touches[0].clientY;
+  const diffX = currentX - startX;
+  const diffY = currentY - startY;
+
+  if (!isDragging) {
+    // If vertical scrolling dominates, cancel horizontal gesture
+    if (Math.abs(diffY) > Math.abs(diffX) && Math.abs(diffY) > 8) {
+      isPointerDown = false;
+      return;
+    }
+    if (Math.abs(diffX) > 8) {
+      isDragging = true;
+      isHorizontalSwipe = true;
+      dragOccurred = true;
+      heroTrack.style.transition = 'none';
+    }
+  }
+
+  if (isHorizontalSwipe) {
+    if (e.cancelable) e.preventDefault(); // Lock vertical page bounce during horizontal swipe
+    dragDiffX = diffX;
+    const currentOffset = prevTranslate - diffX;
+    heroTrack.style.transform = `translateX(-${currentOffset}px)`;
+  }
+}
+
+function onTouchEnd() {
+  if (!isPointerDown && !isHorizontalSwipe) return;
+  isPointerDown = false;
+
+  if (isHorizontalSwipe) {
+    heroTrack.style.transition = 'transform 0.38s cubic-bezier(0.22, 1, 0.36, 1)';
+    const threshold = Math.min(60, window.innerWidth * 0.16);
+    if (dragDiffX < -threshold) {
+      nextHeroSlide();
+    } else if (dragDiffX > threshold) {
+      prevHeroSlide();
+    } else {
+      slideHeroTo(heroCurrentIndex);
+    }
+  }
+
+  isHorizontalSwipe = false;
+  isDragging = false;
+  startHeroAutoSlide();
+}
+
+function onMouseDown(e) {
+  if (e.button !== 0) return; // Only primary left-click
+  if (!heroTrack) return;
+  const cards = heroTrack.querySelectorAll('.hero-card');
+  if (!cards.length) return;
+
+  stopHeroAutoSlide();
+  isPointerDown = true;
+  isDragging = false;
+  dragDiffX = 0;
+  dragOccurred = false;
+
+  startX = e.pageX;
+  startY = e.pageY;
+  const targetCard = cards[heroCurrentIndex];
+  prevTranslate = targetCard ? targetCard.offsetLeft : 0;
+}
+
+function onMouseMove(e) {
+  if (!isPointerDown) return;
+  const diffX = e.pageX - startX;
+  const diffY = e.pageY - startY;
+
+  if (!isDragging && (Math.abs(diffX) > 6 || Math.abs(diffY) > 6)) {
+    isDragging = true;
+    dragOccurred = true;
+    heroTrack.style.transition = 'none';
+    if (heroViewport) heroViewport.style.cursor = 'grabbing';
+  }
+
+  if (isDragging) {
+    e.preventDefault();
+    dragDiffX = diffX;
+    const currentOffset = prevTranslate - diffX;
+    heroTrack.style.transform = `translateX(-${currentOffset}px)`;
+  }
+}
+
+function onMouseUp(e) {
+  if (!isPointerDown) return;
+  isPointerDown = false;
+  if (heroViewport) heroViewport.style.cursor = '';
+
+  if (isDragging) {
+    heroTrack.style.transition = 'transform 0.38s cubic-bezier(0.22, 1, 0.36, 1)';
+    const threshold = 60;
+    if (dragDiffX < -threshold) {
+      nextHeroSlide();
+    } else if (dragDiffX > threshold) {
+      prevHeroSlide();
+    } else {
+      slideHeroTo(heroCurrentIndex);
+    }
+
+    // Suppress accidental click on buttons inside cards if user dragged
+    window.addEventListener('click', suppressDragClick, true);
+    setTimeout(() => {
+      window.removeEventListener('click', suppressDragClick, true);
+    }, 150);
+  }
+
+  isDragging = false;
+  startHeroAutoSlide();
+}
+
+function suppressDragClick(e) {
+  e.stopPropagation();
+  e.preventDefault();
 }
 
 // Trigger Coming Soon Highlight Animation on badge
