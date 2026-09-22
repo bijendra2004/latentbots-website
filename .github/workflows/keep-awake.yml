@@ -1,0 +1,23 @@
+name: Keep Render Server Awake 24/7
+
+on:
+  schedule:
+    # Run every 10 minutes (UTC) to keep Render Free Tier alive
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+
+jobs:
+  ping:
+    name: Ping Backend Server
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping /health Endpoint
+        run: |
+          echo "Pinging Render server at $(date)..."
+          STATUS_CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 45 https://latentbots-website.onrender.com/health || echo "000")
+          echo "Render response status code: $STATUS_CODE"
+          if [ "$STATUS_CODE" = "200" ]; then
+            echo "Render server is online and active!"
+          else
+            echo "Ping returned code $STATUS_CODE. Server is waking up."
+          fi

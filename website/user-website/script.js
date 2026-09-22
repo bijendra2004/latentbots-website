@@ -18,6 +18,7 @@ let BOTS_DATABASE = {
     name: 'LatentMail WhatsApp Bot',
     category: 'Email Forwarding',
     version: 'v1.0.0',
+    badge_status: 'LIVE',
     updated: 'Today, Real-time',
     description: 'LatentMail delivers your most important emails and AI-condensed smart summaries straight to your WhatsApp chat, so you never miss critical updates without opening noisy inboxes.',
     steps: [
@@ -32,6 +33,7 @@ let BOTS_DATABASE = {
     name: 'LatentAlert System Bot',
     category: 'DevOps & Health',
     version: 'v1.1.0',
+    badge_status: 'COMING SOON',
     updated: 'Sep 5, 2026',
     description: 'Instant critical server downtime, error alerts, and uptime status alerts delivered straight to WhatsApp within seconds of incident occurrence.',
     steps: [
@@ -46,6 +48,7 @@ let BOTS_DATABASE = {
     name: 'LatentDigest Briefing Bot',
     category: 'Daily Productivity',
     version: 'v1.0.0',
+    badge_status: 'COMING SOON',
     updated: 'Sep 4, 2026',
     description: 'A calm, curated morning briefing of your upcoming calendar schedule, newsletter highlights, and priority unread threads delivered at 8:00 AM daily.',
     steps: [
@@ -60,6 +63,7 @@ let BOTS_DATABASE = {
     name: 'LatentLead Inbound Bot',
     category: 'Sales & Inbound',
     version: 'v1.0.0',
+    badge_status: 'COMING SOON',
     updated: 'Sep 3, 2026',
     description: 'Never miss an inbound customer inquiry. Gets instant WhatsApp lead alerts within 5 seconds of customer web form submissions.',
     steps: [

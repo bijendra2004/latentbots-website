@@ -100,13 +100,27 @@ try {
   }
 } catch (e) { console.error('Migration bots badge_status error:', e); }
 
+// Sync badge statuses from bot-state.json on server startup
+const botStateFilePath = path.resolve(__dirname, 'bot-state.json');
+function getPersistentBotStates() {
+  try {
+    if (fs.existsSync(botStateFilePath)) {
+      return JSON.parse(fs.readFileSync(botStateFilePath, 'utf8'));
+    }
+  } catch (err) {
+    console.warn('Could not read bot-state.json:', err.message);
+  }
+  return {};
+}
+
 // Seed initial bots if table is empty
 try {
+  const persistentStates = getPersistentBotStates();
   const count = db.prepare("SELECT COUNT(*) as count FROM bots").get().count;
   if (count === 0) {
     const seedBot = db.prepare(`
-      INSERT INTO bots (id, name, category, version, version_code, description, kicker, heading, lede, microcopy, wa_text, steps_json, status, updated_at)
-      VALUES (@id, @name, @category, @version, @version_code, @description, @kicker, @heading, @lede, @microcopy, @wa_text, @steps_json, @status, @updated_at)
+      INSERT INTO bots (id, name, category, version, version_code, description, kicker, heading, lede, microcopy, wa_text, steps_json, status, badge_status, updated_at)
+      VALUES (@id, @name, @category, @version, @version_code, @description, @kicker, @heading, @lede, @microcopy, @wa_text, @steps_json, @status, @badge_status, @updated_at)
     `);
 
     const initialBots = [
@@ -128,6 +142,7 @@ try {
           { title: 'Confirm WhatsApp Link', desc: 'Click the button below to verify your WhatsApp chat and receive instant notifications.' }
         ]),
         status: 'active',
+        badge_status: persistentStates.latentmail?.badge_status || 'LIVE',
         updated_at: 'Today, Real-time'
       },
       {
@@ -148,6 +163,7 @@ try {
           { title: 'Verify Alert Channel', desc: 'Click connect to start receiving automated server incident pings on WhatsApp.' }
         ]),
         status: 'active',
+        badge_status: persistentStates.latentalert?.badge_status || 'COMING SOON',
         updated_at: 'Sep 5, 2026'
       },
       {
@@ -168,6 +184,7 @@ try {
           { title: 'Activate Daily Digest', desc: 'Click connect to confirm delivery directly to your WhatsApp each morning.' }
         ]),
         status: 'active',
+        badge_status: persistentStates.latentdigest?.badge_status || 'COMING SOON',
         updated_at: 'Sep 4, 2026'
       },
       {
@@ -188,12 +205,21 @@ try {
           { title: 'Connect Sales Channel', desc: 'Click connect to route high-intent leads to your sales WhatsApp instantly.' }
         ]),
         status: 'active',
+        badge_status: persistentStates.latentlead?.badge_status || 'COMING SOON',
         updated_at: 'Sep 3, 2026'
       }
     ];
 
     for (const bot of initialBots) {
       seedBot.run(bot);
+    }
+  } else {
+    // If bots already exist, ensure any saved badge statuses from bot-state.json are strictly applied
+    const updateBadgeStmt = db.prepare('UPDATE bots SET badge_status = ? WHERE id = ?');
+    for (const [botId, data] of Object.entries(persistentStates)) {
+      if (data && data.badge_status) {
+        updateBadgeStmt.run(data.badge_status.toUpperCase(), botId);
+      }
     }
   }
 } catch (e) {

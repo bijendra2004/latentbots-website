@@ -1,4 +1,21 @@
+const fs = require('fs');
+const path = require('path');
 const db = require('../db-connect');
+
+const botStateFilePath = path.resolve(__dirname, '../bot-state.json');
+
+function saveBotStateToJson(botId, updates) {
+  try {
+    let state = {};
+    if (fs.existsSync(botStateFilePath)) {
+      state = JSON.parse(fs.readFileSync(botStateFilePath, 'utf8'));
+    }
+    state[botId] = { ...(state[botId] || {}), ...updates };
+    fs.writeFileSync(botStateFilePath, JSON.stringify(state, null, 2), 'utf8');
+  } catch (err) {
+    console.warn('Could not persist to bot-state.json:', err.message);
+  }
+}
 
 function getAllBots(includeInactive = false) {
   if (includeInactive) {
@@ -60,6 +77,10 @@ function upsertBot(data) {
       updated_at: data.updated_at || 'Just now'
     });
 
+    if (data.badge_status) {
+      saveBotStateToJson(data.id, { badge_status: data.badge_status.toUpperCase() });
+    }
+
     return getBotById(data.id);
   }
 
@@ -97,10 +118,21 @@ function upsertBot(data) {
     updated_at: data.updated_at || 'Just now'
   });
 
+  if (data.badge_status) {
+    saveBotStateToJson(data.id, { badge_status: data.badge_status.toUpperCase() });
+  }
+
   return getBotById(data.id);
 }
 
 function deleteBot(id) {
+  try {
+    if (fs.existsSync(botStateFilePath)) {
+      const state = JSON.parse(fs.readFileSync(botStateFilePath, 'utf8'));
+      delete state[id];
+      fs.writeFileSync(botStateFilePath, JSON.stringify(state, null, 2), 'utf8');
+    }
+  } catch (e) {}
   return db.prepare('DELETE FROM bots WHERE id = ?').run(id);
 }
 
@@ -110,7 +142,9 @@ function toggleBotStatus(id, newStatus) {
 }
 
 function updateBotBadge(id, badgeStatus) {
-  db.prepare('UPDATE bots SET badge_status = ? WHERE id = ?').run(badgeStatus, id);
+  const cleanBadge = (badgeStatus || 'LIVE').toUpperCase();
+  db.prepare('UPDATE bots SET badge_status = ? WHERE id = ?').run(cleanBadge, id);
+  saveBotStateToJson(id, { badge_status: cleanBadge });
   return getBotById(id);
 }
 
@@ -122,3 +156,4 @@ module.exports = {
   toggleBotStatus,
   updateBotBadge
 };
+
